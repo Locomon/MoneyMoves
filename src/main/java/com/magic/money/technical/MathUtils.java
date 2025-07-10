@@ -1,4 +1,4 @@
-package com.magic.money.math;
+package com.magic.money.technical;
 import java.util.function.DoubleUnaryOperator;
 
 public class MathUtils {

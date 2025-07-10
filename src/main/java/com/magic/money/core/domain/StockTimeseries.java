@@ -1,7 +1,8 @@
-package com.magic.money.domain;
+package com.magic.money.core.domain;
 
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableMap;
 
 public class StockTimeseries {
@@ -26,11 +27,17 @@ public class StockTimeseries {
 		return new StockTimeseriesBuilder(symbol);
 	}
 	
+	@Override
+	public String toString() {
+		return stockTimeseriesDatapointMap.entrySet().stream().map(entry -> String.join(",", entry.getKey().toString(), entry.getValue().toString())).collect(Collectors.joining("\n")); 														  
+	}
+	
 	public static class StockTimeseriesBuilder {
 		private String symbol; 
 		private ImmutableMap.Builder<LocalDate, StockTimeseriesDatapoint> stockTimeseriesDatapointMapBuilder;
 		
 		private StockTimeseriesBuilder(String symbol) {
+			this.stockTimeseriesDatapointMapBuilder = ImmutableMap.builder();
 			this.symbol = symbol;
 		}
 		
@@ -44,39 +51,5 @@ public class StockTimeseries {
 		}
 	}
 	
-	public static class StockTimeseriesDatapoint {
-		private final double open;
-		private final double high;
-		private final double low;
-		private final double close;
-		private final int volume;
-		
-		public StockTimeseriesDatapoint(double open, double high, double low, double close, int volume) {
-			this.open = open;
-			this.high = high;
-			this.low = low;
-			this.close = close;
-			this.volume = volume;
-		}
-		
-		public double getOpen() {
-			return open;
-		}
-		
-		public double getHigh() {
-			return high;
-		}
-		
-		public double getLow() {
-			return low;
-		}
-		
-		public double close() {
-			return close;
-		}
-		
-		public int getVolume() {
-			return volume;
-		}
-	}
+
 }
