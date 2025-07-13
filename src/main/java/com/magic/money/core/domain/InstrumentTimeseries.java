@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableMap;
 
-public class StockTimeseries {
+public class InstrumentTimeseries {
 	
 	private String symbol;
-	private Map<LocalDate, StockTimeseriesDatapoint> stockTimeseriesDatapointMap;
+	private Map<LocalDate, InstrumentTimeseriesDatapoint> stockTimeseriesDatapointMap;
 	
-	public StockTimeseries(StockTimeseriesBuilder builder) {
+	public InstrumentTimeseries(StockTimeseriesBuilder builder) {
 		this.symbol = builder.symbol;
 		this.stockTimeseriesDatapointMap = builder.stockTimeseriesDatapointMapBuilder.build();
 	}
@@ -19,7 +19,7 @@ public class StockTimeseries {
 		return symbol;
 	}
 	
-	public Map<LocalDate, StockTimeseriesDatapoint> getStockTimeseriesDatapointMap() {
+	public Map<LocalDate, InstrumentTimeseriesDatapoint> getStockTimeseriesDatapointMap() {
 		return stockTimeseriesDatapointMap;
 	}
 	
@@ -29,12 +29,14 @@ public class StockTimeseries {
 	
 	@Override
 	public String toString() {
-		return stockTimeseriesDatapointMap.entrySet().stream().map(entry -> String.join(",", entry.getKey().toString(), entry.getValue().toString())).collect(Collectors.joining("\n")); 														  
+		return stockTimeseriesDatapointMap.entrySet().stream().map(entry -> String.join("," , entry.getKey().toString()
+																							, entry.getValue().toString()))
+													 .collect(Collectors.joining("\n")); 														  
 	}
 	
 	public static class StockTimeseriesBuilder {
 		private String symbol; 
-		private ImmutableMap.Builder<LocalDate, StockTimeseriesDatapoint> stockTimeseriesDatapointMapBuilder;
+		private ImmutableMap.Builder<LocalDate, InstrumentTimeseriesDatapoint> stockTimeseriesDatapointMapBuilder;
 		
 		private StockTimeseriesBuilder(String symbol) {
 			this.stockTimeseriesDatapointMapBuilder = ImmutableMap.builder();
@@ -42,12 +44,12 @@ public class StockTimeseries {
 		}
 		
 		public StockTimeseriesBuilder stockTimeseriesDatapoint(LocalDate cobDate, double open, double high, double low, double close, int volume) {
-			this.stockTimeseriesDatapointMapBuilder.put(cobDate, new StockTimeseriesDatapoint(open, high, low, close, volume));
+			this.stockTimeseriesDatapointMapBuilder.put(cobDate, new InstrumentTimeseriesDatapoint(open, high, low, close, volume));
 			return this;
 		}
 		
-		public StockTimeseries build() {
-			return new StockTimeseries(this);
+		public InstrumentTimeseries build() {
+			return new InstrumentTimeseries(this);
 		}
 	}
 	

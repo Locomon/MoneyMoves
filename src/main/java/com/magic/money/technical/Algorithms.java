@@ -1,7 +1,7 @@
 package com.magic.money.technical;
 
-import com.magic.money.core.domain.StockTimeseries;
-import com.magic.money.core.domain.StockTimeseriesDatapoint;
+import com.magic.money.core.domain.InstrumentTimeseries;
+import com.magic.money.core.domain.InstrumentTimeseriesDatapoint;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +10,10 @@ import java.util.Map;
 public class Algorithms {
 	
 
-	public static double calculateRSI(StockTimeseries timeseries, LocalDate cobDate, int numDays) {
+	public static double calculateRSI(InstrumentTimeseries timeseries, LocalDate cobDate, int numDays) {
 		LocalDate tempDate = cobDate;
 		LocalDate tempPrevDate = tempDate.minusDays(1);
-		Map<LocalDate, StockTimeseriesDatapoint> datapointMap = timeseries.getStockTimeseriesDatapointMap();
+		Map<LocalDate, InstrumentTimeseriesDatapoint> datapointMap = timeseries.getStockTimeseriesDatapointMap();
 		while (!datapointMap.containsKey(tempPrevDate)) {
 			tempPrevDate = tempPrevDate.minusDays(1);
 		}
@@ -63,7 +63,6 @@ public class Algorithms {
 		double avgPercentageLosses = !percentageLosses.isEmpty() ? percentageLosses.stream().mapToDouble(gain -> gain.doubleValue()).average().orElse(Double.NaN) : 1.0;
 		System.out.println(avgPercentageGains + "," + avgPercentageLosses);
 		double firstPart = calculateRsiFirstPart(avgPercentageGains, avgPercentageLosses);
-		
 		return firstPart;
 	}
 	

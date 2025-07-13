@@ -1,0 +1,10 @@
+package com.magic.money.technical.candlesticks;
+
+public enum CANDLESTICK_TRIO {
+	/**Bullish**/
+	MORNING_STAR,THREE_WHITE_SOLDIERS,THREE_INSIDE_UP,BULLISH_ABANDONED_BABY,
+	/**Bearish**/
+	EVENING_STAR,THREE_BLACK_CROWS,THREE_INSIDE_DOWN,BEARISH_ABANDONED_BABY
+	
+
+}

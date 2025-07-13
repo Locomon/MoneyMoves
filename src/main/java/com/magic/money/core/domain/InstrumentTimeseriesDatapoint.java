@@ -1,13 +1,13 @@
 package com.magic.money.core.domain;
 
-public class StockTimeseriesDatapoint {
+public class InstrumentTimeseriesDatapoint {
 	private final double open;
 	private final double high;
 	private final double low;
 	private final double close;
 	private final int volume;
 	
-	public StockTimeseriesDatapoint(double open, double high, double low, double close, int volume) {
+	public InstrumentTimeseriesDatapoint(double open, double high, double low, double close, int volume) {
 		this.open = open;
 		this.high = high;
 		this.low = low;
