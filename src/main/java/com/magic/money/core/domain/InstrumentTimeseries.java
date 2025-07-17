@@ -8,43 +8,43 @@ import com.google.common.collect.ImmutableMap;
 public class InstrumentTimeseries {
 	
 	private String symbol;
-	private Map<LocalDate, InstrumentTimeseriesDatapoint> stockTimeseriesDatapointMap;
+	private Map<LocalDate, InstrumentTimeseriesDatapoint> instrumentTimeseriesDatapointMap;
 	
-	public InstrumentTimeseries(StockTimeseriesBuilder builder) {
+	public InstrumentTimeseries(InstrumentTimeseriesBuilder builder) {
 		this.symbol = builder.symbol;
-		this.stockTimeseriesDatapointMap = builder.stockTimeseriesDatapointMapBuilder.build();
+		this.instrumentTimeseriesDatapointMap = builder.instrumentTimeseriesDatapointMapBuilder.build();
 	}
 	
 	public String getSymbol() {
 		return symbol;
 	}
 	
-	public Map<LocalDate, InstrumentTimeseriesDatapoint> getStockTimeseriesDatapointMap() {
-		return stockTimeseriesDatapointMap;
+	public Map<LocalDate, InstrumentTimeseriesDatapoint> getInstrumentTimeseriesDatapointMap() {
+		return instrumentTimeseriesDatapointMap;
 	}
 	
-	public static StockTimeseriesBuilder builder(String symbol) {
-		return new StockTimeseriesBuilder(symbol);
+	public static InstrumentTimeseriesBuilder builder(String symbol) {
+		return new InstrumentTimeseriesBuilder(symbol);
 	}
 	
 	@Override
 	public String toString() {
-		return stockTimeseriesDatapointMap.entrySet().stream().map(entry -> String.join("," , entry.getKey().toString()
+		return instrumentTimeseriesDatapointMap.entrySet().stream().map(entry -> String.join("," , entry.getKey().toString()
 																							, entry.getValue().toString()))
 													 .collect(Collectors.joining("\n")); 														  
 	}
 	
-	public static class StockTimeseriesBuilder {
+	public static class InstrumentTimeseriesBuilder {
 		private String symbol; 
-		private ImmutableMap.Builder<LocalDate, InstrumentTimeseriesDatapoint> stockTimeseriesDatapointMapBuilder;
+		private ImmutableMap.Builder<LocalDate, InstrumentTimeseriesDatapoint> instrumentTimeseriesDatapointMapBuilder;
 		
-		private StockTimeseriesBuilder(String symbol) {
-			this.stockTimeseriesDatapointMapBuilder = ImmutableMap.builder();
+		private InstrumentTimeseriesBuilder(String symbol) {
+			this.instrumentTimeseriesDatapointMapBuilder = ImmutableMap.builder();
 			this.symbol = symbol;
 		}
 		
-		public StockTimeseriesBuilder stockTimeseriesDatapoint(LocalDate cobDate, double open, double high, double low, double close, int volume) {
-			this.stockTimeseriesDatapointMapBuilder.put(cobDate, new InstrumentTimeseriesDatapoint(open, high, low, close, volume));
+		public InstrumentTimeseriesBuilder stockTimeseriesDatapoint(LocalDate cobDate, double open, double high, double low, double close, int volume) {
+			this.instrumentTimeseriesDatapointMapBuilder.put(cobDate, new InstrumentTimeseriesDatapoint(open, high, low, close, volume));
 			return this;
 		}
 		

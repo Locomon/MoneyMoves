@@ -7,13 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 public class Algorithms {
 	
 
 	public static double calculateRSI(InstrumentTimeseries timeseries, LocalDate cobDate, int numDays) {
 		LocalDate tempDate = cobDate;
 		LocalDate tempPrevDate = tempDate.minusDays(1);
-		Map<LocalDate, InstrumentTimeseriesDatapoint> datapointMap = timeseries.getStockTimeseriesDatapointMap();
+		Map<LocalDate, InstrumentTimeseriesDatapoint> datapointMap = timeseries.getInstrumentTimeseriesDatapointMap();
 		while (!datapointMap.containsKey(tempPrevDate)) {
 			tempPrevDate = tempPrevDate.minusDays(1);
 		}
@@ -72,8 +74,5 @@ public class Algorithms {
 	}
 	
 	
-	public static void main (String ... args) {
-		System.out.println(calculateRsiFirstPart(.01, .008));
-	}
 
 }

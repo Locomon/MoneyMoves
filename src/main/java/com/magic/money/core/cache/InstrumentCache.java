@@ -1,9 +1,11 @@
 package com.magic.money.core.cache;
 
 import java.security.KeyStore.Entry;
+import java.util.Comparator;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -15,22 +17,22 @@ public class InstrumentCache {
 	//InstrumentType(Stock^ETF)->Exchange->Symbol
 	private Map<String, Map<String, Map<String, Instrument>>> iexSymbolMap;
 	
-	private Map<String, InstrumentTimeseries> stockTimeseriesMap;
+	private Map<String, InstrumentTimeseries> instrumentTimeseriesMap;
 	
 	public InstrumentCache() {
-		this.iexSymbolMap = new HashMap<>();
-		this.stockTimeseriesMap = new HashMap<>();
+		this.iexSymbolMap = new TreeMap<>();
+		this.instrumentTimeseriesMap = new TreeMap<>();
 	}
 	
 	public void putInstrument(Instrument instrument) {
 		String assetType = instrument.getAssetType();
 		if (!iexSymbolMap.containsKey(assetType)) {
-			iexSymbolMap.put(assetType, new HashMap<>());
+			iexSymbolMap.put(assetType, new TreeMap<>());
 		}
 		Map<String, Map<String, Instrument>> exchangeSymbolMap = iexSymbolMap.get(assetType);
 		String exchange = instrument.getExchange();
 		if (!exchangeSymbolMap.containsKey(exchange)) {
-			exchangeSymbolMap.put(exchange, new HashMap<>());
+			exchangeSymbolMap.put(exchange, new TreeMap<>());
 		}
 		Map<String, Instrument> symbolMap = exchangeSymbolMap.get(exchange);
 		symbolMap.put(instrument.getSymbol(), instrument);
@@ -45,6 +47,16 @@ public class InstrumentCache {
 			iexSymbolMap.get(instrumentType).keySet().stream().collect(Collectors.toSet()) : Collections.emptySet();
 	}
 	
+	public Set<Instrument> getInstrumentSet(String instrumentType, String exchange) {
+		if (!iexSymbolMap.containsKey(instrumentType)) {
+			return Collections.emptySet();
+		} else {
+			Map<String, Map<String, Instrument>> exchangeSymbolMap = iexSymbolMap.get(instrumentType);
+			return exchangeSymbolMap.containsKey(exchange)
+				? exchangeSymbolMap.get(exchange).values().stream().collect(Collectors.toCollection( () -> new TreeSet<>(Comparator.comparing(Instrument::getSymbol)))) : Collections.emptySet();
+		}
+	}
+	
 	public Map<String, Instrument> getInstrumentMap(String instrumentType, String exchange) {
 		if (!iexSymbolMap.containsKey(instrumentType)) {
 			return Collections.emptyMap();
@@ -56,12 +68,12 @@ public class InstrumentCache {
 		}
 	}
 	
-	public void putStockTimeseries(InstrumentTimeseries timeseries) {
-		this.stockTimeseriesMap.put(timeseries.getSymbol(), timeseries);
+	public void putInstrumentTimeseries(InstrumentTimeseries timeseries) {
+		this.instrumentTimeseriesMap.put(timeseries.getSymbol(), timeseries);
 	}
 	
-	public InstrumentTimeseries getStockTimeseries(String symbol) {
-		return stockTimeseriesMap.get(symbol);
+	public InstrumentTimeseries getInstrumentTimeseries(String symbol) {
+		return instrumentTimeseriesMap.get(symbol);
 	}
 	
 	static InstrumentCache singleton;

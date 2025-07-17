@@ -9,13 +9,13 @@ import com.magic.money.core.ApiKeyManager;
 import com.magic.money.core.cache.InstrumentCache;
 import com.magic.money.core.domain.Instrument;
 import com.magic.money.core.domain.InstrumentTimeseries;
-import com.magic.money.core.domain.InstrumentTimeseries.StockTimeseriesBuilder;
+import com.magic.money.core.domain.InstrumentTimeseries.InstrumentTimeseriesBuilder;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 public class InstrumentCacheLoader {
 
-	public static void loadStockDefinitionsToCsv() {
+	public static void loadInstrumentDefinitionsToCsv() {
 		try {
 			String apiKey = ApiKeyManager.getKey("alphavantage");
 			String apiUrl = "https://www.alphavantage.co/query?function=LISTING_STATUS&apikey=" + apiKey;
@@ -58,10 +58,10 @@ public class InstrumentCacheLoader {
 		}
 	}
 	
-	public static void loadStockTimeseries(String symbol) {
+	public static void loadInstrumentTimeseries(String symbol) {
 		InstrumentTimeseries timeseries = getTimeseriesDaily(symbol);
 		InstrumentCache cache = InstrumentCache.getInstance();
-		cache.putStockTimeseries(timeseries);
+		cache.putInstrumentTimeseries(timeseries);
 	}
 
 	public static InstrumentTimeseries getTimeseriesDaily(String symbol) {
@@ -71,7 +71,7 @@ public class InstrumentCacheLoader {
 		String resultStr = restTemplate.getForObject(url, String.class);
 		String[] resultArr = resultStr.split("\\r\\n");
 		System.out.println(resultArr[0]);
-		StockTimeseriesBuilder builder = InstrumentTimeseries.builder(symbol);
+		InstrumentTimeseriesBuilder builder = InstrumentTimeseries.builder(symbol);
 		for (int i = 1 ; i < resultArr.length ; i++) {
 			System.out.println(resultArr[i]);
 			String [] row = resultArr[i].split(",");
