@@ -2,8 +2,6 @@ package com.magic.money.technical;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,30 +20,61 @@ public class TechnicalAnalysis {
 	public static EnrichedTimeseries enrichTimeseries(InstrumentTimeseries rawTimeseries) {
 		Map<LocalDate, InstrumentTimeseriesDatapoint> rawDatapointMap = 
 			rawTimeseries.getInstrumentTimeseriesDatapointMap();
-		LocalDate latestDate = rawDatapointMap.keySet().stream().sorted().findFirst().get();
-		LocalDate earliestDate = rawDatapointMap.keySet().stream().sorted(Comparator.reverseOrder()).findFirst().get();
-		LocalDate tempDate = earliestDate;
-		Map<LocalDate, Double> rsi14Map = calculateRollingRSI(rawDatapointMap, 14);
 		
+		List<LocalDate> sortedDates = 
+			rawDatapointMap.keySet().stream().sorted().toList();
+		Map<LocalDate, Double> rsi14Map = calculateRollingRSI(rawDatapointMap, sortedDates, 14);
 		Map<LocalDate, EnrichedTimeseriesDatapoint> enrichedMap = new TreeMap<>();
 		
-//		while (tempDate.compareTo(earliestDate) > 0) {
-//			rsiMap.put(loc, null)
-//			tempDate = tempDate.minusDays(1);
-//		}
+		enrichedMap.put(sortedDates.get(0), 
+						EnrichedTimeseriesDatapoint.builder(rawDatapointMap.get(sortedDates.get(0)))
+								   				   .rsi(Double.NaN).build());
+
+		EnrichedTimeseries.EnrichedTimeseriesBuilder builder = EnrichedTimeseries.builder(rawTimeseries.getSymbol());
 		
-		return null;
+		Map<LocalDate, Double> sma14Map = calculateSMA(rawDatapointMap, sortedDates, 14);
+		Map<LocalDate, Double> sma60Map = calculateSMA(rawDatapointMap, sortedDates, 60);
+
+
+		for(int i = 1; i < sortedDates.size(); i++) {
+			LocalDate cobDate = sortedDates.get(i);
+			Double rsi = rsi14Map.get(cobDate);
+			if (rsi == null) {
+				rsi = Double.NaN;
+			}
+			Double sma14 = sma14Map.get(cobDate);
+			if (sma14 == null) {
+				sma14 = Double.NaN;
+			}
+			Double sma60 = sma60Map.get(cobDate);
+			if (sma60 == null) {
+				sma60 = Double.NaN;
+			}
+			InstrumentTimeseriesDatapoint prevDatapoint = rawDatapointMap.get(sortedDates.get(i - 1));
+			double pivot = ( prevDatapoint.getHigh() + prevDatapoint.getLow() + prevDatapoint.getClose() ) / 3;
+			double support1 = ( pivot * 2) - prevDatapoint.getHigh();
+			double support2 = pivot - prevDatapoint.getHigh() + prevDatapoint.getLow();
+			double resistance1 = (2 * pivot) - prevDatapoint.getLow();
+			double resistance2 = pivot + prevDatapoint.getHigh() - prevDatapoint.getLow();
+			builder.enrichedTimeseriesDatapoint(cobDate, 
+							EnrichedTimeseriesDatapoint.builder(rawDatapointMap.get(sortedDates.get(i)))
+									   				   .rsi(rsi)
+									   				   .support1(support1).support2(support2)
+									   				   .resistance1(resistance1).resistance2(resistance2)
+									   				   .sma14(sma14).sma60(sma60).build());
+		}
+		return builder.build();
 	}
 	
 	public static Map<LocalDate, Double> calculateRollingRSI(
 	    Map<LocalDate, InstrumentTimeseriesDatapoint> data,
+	    List<LocalDate> sortedDates,
 	    int period
 	) {
 	    Map<LocalDate, Double> rsiMap = new HashMap<>();
 	    Map<LocalDate, Pair<Double, Double>> avgGainLossMap = new HashMap<>();
 	
-	    List<LocalDate> sortedDates = new ArrayList<>(data.keySet());
-	    Collections.sort(sortedDates);
+	    //Collections.sort(sortedDates);
 	
 	    if (sortedDates.size() <= period) return rsiMap;
 	
@@ -58,6 +87,7 @@ public class TechnicalAnalysis {
 	                     - data.get(sortedDates.get(i - 1)).getClose();
 	        totalGain += Math.max(delta, 0);
 	        totalLoss += Math.max(-delta, 0);
+	        
 	    }
 	
 	    double avgGain = totalGain / period;
@@ -71,24 +101,19 @@ public class TechnicalAnalysis {
 	    for (int i = period + 1; i < sortedDates.size(); i++) {
 	        LocalDate curr = sortedDates.get(i);
 	        LocalDate prev = sortedDates.get(i - 1);
-	        LocalDate old = sortedDates.get(i - period - 1);
-	        LocalDate ref = sortedDates.get(i - 1);
-	
+
 	        double currClose = data.get(curr).getClose();
 	        double prevClose = data.get(prev).getClose();
-	        double oldClose = data.get(old).getClose();
-	        double preOldClose = data.get(sortedDates.get(i - period - 2)).getClose();
-	
-	        double gainOut = Math.max(oldClose - preOldClose, 0);
-	        double lossOut = Math.max(preOldClose - oldClose, 0);
-	
-	        double gainIn = Math.max(currClose - prevClose, 0);
-	        double lossIn = Math.max(prevClose - currClose, 0);
-	
-	        Pair<Double, Double> prevAvg = avgGainLossMap.get(ref);
-	        double newAvgGain = (prevAvg.getLeft() * period - gainOut + gainIn) / period;
-	        double newAvgLoss = (prevAvg.getRight() * period - lossOut + lossIn) / period;
-	
+
+	        double change = currClose - prevClose;
+	        double gain = Math.max(change, 0);
+	        double loss = Math.max(-change, 0);
+
+	        Pair<Double, Double> prevAvg = avgGainLossMap.get(prev);
+
+	        double newAvgGain = (prevAvg.getLeft() * (period - 1) + gain) / period;
+	        double newAvgLoss = (prevAvg.getRight() * (period - 1) + loss) / period;
+
 	        avgGainLossMap.put(curr, Pair.of(newAvgGain, newAvgLoss));
 	        rsiMap.put(curr, computeRSI(newAvgGain, newAvgLoss));
 	    }
@@ -225,6 +250,33 @@ public class TechnicalAnalysis {
 	public static double calculateRsiFirstPart(double avgPercentageGains, double avgPercentageLosses) {
 		return 100 - (100 / (1 + (avgPercentageGains/avgPercentageLosses)));
 	}
+	
+	public static Map<LocalDate, Double> calculateSMA(
+		    Map<LocalDate, InstrumentTimeseriesDatapoint> data,
+		    List<LocalDate> sortedDates,
+		    int period
+		) {
+		    Map<LocalDate, Double> smaMap = new HashMap<>();
+		    double sum = 0.0;
+
+		    for (int i = 0; i < sortedDates.size(); i++) {
+		        LocalDate date = sortedDates.get(i);
+		        double close = data.get(date).getClose();
+		        sum += close;
+
+		        if (i >= period - 1) {
+		            if (i >= period) {
+		                LocalDate dateOut = sortedDates.get(i - period);
+		                sum -= data.get(dateOut).getClose();
+		            }
+		            smaMap.put(date, sum / period);
+		        } else {
+		            smaMap.put(date, Double.NaN); // Not enough data yet
+		        }
+		    }
+		    return smaMap;
+		}
+
 
 }
 

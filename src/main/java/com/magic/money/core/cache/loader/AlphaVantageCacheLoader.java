@@ -2,32 +2,54 @@ package com.magic.money.core.cache.loader;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.Properties;
 
 import org.springframework.web.client.RestTemplate;
 
 import com.magic.money.core.ApiKeyManager;
 import com.magic.money.core.cache.InstrumentCache;
-import com.magic.money.core.domain.Instrument;
 import com.magic.money.core.domain.InstrumentTimeseries;
 import com.magic.money.core.domain.InstrumentTimeseries.InstrumentTimeseriesBuilder;
 import java.net.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-public class InstrumentCacheLoader {
+public class AlphaVantageCacheLoader {
 
 	public static void loadInstrumentDefinitionsToCsv() {
 		try {
+			Properties config = new Properties();
+			InputStream input = AlphaVantageCacheLoader.class.getClassLoader().getResourceAsStream("config.properties");
+	        
+	        if (input == null) {
+                throw new IOException("config.properties not found in classpath.");
+            }
+            config.load(input);
+	        // Step 1: Get base datadir
+	        String dataDirStr = config.getProperty("datadir");
+	        Path dataDir = Paths.get(dataDirStr);
+	        // Step 2: Resolve Metadata subfolder
+	        Path metadataDir = dataDir.resolve("Metadata");
+	        // Step 3: Create Metadata directory if it doesn't exist
+	        if (Files.notExists(metadataDir)) {
+	            Files.createDirectories(metadataDir);
+	        }
+	        // Step 4: Reference listing.csv in Metadata directory
+			
+			Path OUTPUT_CSV = metadataDir.resolve("listing_status.csv");
+			
 			String apiKey = ApiKeyManager.getKey("alphavantage");
 			String apiUrl = "https://www.alphavantage.co/query?function=LISTING_STATUS&apikey=" + apiKey;
-			String OUTPUT_CSV = "listing_status.csv";
+
+			
 			// Connect to API
 			URL url = new URL(apiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             // Read response
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            BufferedWriter writer = Files.newBufferedWriter(Paths.get(OUTPUT_CSV));
-            String line;
+            BufferedWriter writer = Files.newBufferedWriter(OUTPUT_CSV);
+            String line = reader.readLine();
             while ((line = reader.readLine()) != null) {
                 writer.write(line);
                 writer.newLine();
@@ -38,24 +60,6 @@ public class InstrumentCacheLoader {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
-	}
-	
-	public static void populateStockCacheFromCsv() {
-		InstrumentCache cache = InstrumentCache.getInstance();
-		try {
-			BufferedReader reader = Files.newBufferedReader(Paths.get("listing_status.csv"));
-			String line = reader.readLine();
-			while((line = reader.readLine()) != null) {
-				String [] linesplit = line.split(",");
-				// Symbol, Name, Exchange, Instrument Type
-				Instrument instrument = new Instrument(linesplit[0], linesplit[1], linesplit[2], linesplit[3]);
-				cache.putInstrument(instrument);
-				//System.out.println(line);
-			}
-			reader.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public static void loadInstrumentTimeseries(String symbol) {
@@ -82,7 +86,7 @@ public class InstrumentCacheLoader {
 			double low = Double.valueOf(row[3]);
 			double close = Double.valueOf(row[4]);
 			int volume = Integer.valueOf(row[5]);
-			builder.stockTimeseriesDatapoint(cobDate, open, high, low, close, volume);
+			builder.instrumentTimeseriesDatapoint(cobDate, open, high, low, close, volume);
 		}
 		return builder.build();
 	}

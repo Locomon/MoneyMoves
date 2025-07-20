@@ -2,8 +2,8 @@ package com.magic.money.core.domain;
 
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
-import com.google.common.collect.ImmutableMap;
 
 public class InstrumentTimeseries {
 	
@@ -12,7 +12,7 @@ public class InstrumentTimeseries {
 	
 	public InstrumentTimeseries(InstrumentTimeseriesBuilder builder) {
 		this.symbol = builder.symbol;
-		this.instrumentTimeseriesDatapointMap = builder.instrumentTimeseriesDatapointMapBuilder.build();
+		this.instrumentTimeseriesDatapointMap = builder.instrumentTimeseriesDatapointMap;
 	}
 	
 	public String getSymbol() {
@@ -36,15 +36,15 @@ public class InstrumentTimeseries {
 	
 	public static class InstrumentTimeseriesBuilder {
 		private String symbol; 
-		private ImmutableMap.Builder<LocalDate, InstrumentTimeseriesDatapoint> instrumentTimeseriesDatapointMapBuilder;
+		private TreeMap<LocalDate, InstrumentTimeseriesDatapoint> instrumentTimeseriesDatapointMap;
 		
 		private InstrumentTimeseriesBuilder(String symbol) {
-			this.instrumentTimeseriesDatapointMapBuilder = ImmutableMap.builder();
+			this.instrumentTimeseriesDatapointMap = new TreeMap<>();
 			this.symbol = symbol;
 		}
 		
-		public InstrumentTimeseriesBuilder stockTimeseriesDatapoint(LocalDate cobDate, double open, double high, double low, double close, int volume) {
-			this.instrumentTimeseriesDatapointMapBuilder.put(cobDate, new InstrumentTimeseriesDatapoint(open, high, low, close, volume));
+		public InstrumentTimeseriesBuilder instrumentTimeseriesDatapoint(LocalDate cobDate, double open, double high, double low, double close, int volume) {
+			this.instrumentTimeseriesDatapointMap.put(cobDate, new InstrumentTimeseriesDatapoint(open, high, low, close, volume));
 			return this;
 		}
 		

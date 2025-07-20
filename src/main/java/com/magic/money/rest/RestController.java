@@ -3,7 +3,9 @@ package com.magic.money.rest;
 import java.util.function.Supplier;
 
 import com.magic.money.core.cache.InstrumentCache;
-import com.magic.money.core.cache.loader.InstrumentCacheLoader;
+import com.magic.money.core.cache.loader.AlphaVantageCacheLoader;
+import com.magic.money.core.cache.loader.CsvCacheLoader;
+import com.magic.money.technical.TechnicalAnalysis;
 import com.magic.money.core.cache.controller.InstrumentCacheController;
 
 import akka.http.javadsl.server.AllDirectives;
@@ -21,7 +23,6 @@ public class RestController extends AllDirectives {
         	path("getExchangesForInstrument", getExchangesForInstrument()),
         	path("getInstrumentMap", getInstrumentMap()),
         	path("getInstrumentSet", getInstrumentSet()),
-            path("loadInstrumentTimeseries", loadInstrumentTimeseries()),
         	path("getTimeseries", getTimeseriesDaily()),
         	path("getTimeseriesString", getTimeseriesDailyString()),
         	//Technical Routes
@@ -34,14 +35,14 @@ public class RestController extends AllDirectives {
     
     public Supplier<Route> loadStocksToCsv() {
     	return () -> get(() -> {
-    		InstrumentCacheLoader.loadInstrumentDefinitionsToCsv();
+    		AlphaVantageCacheLoader.loadInstrumentDefinitionsToCsv();
     		return complete("LOADED");
     	});
     }
     
     public Supplier<Route> populateFromCsv() {
     	return () -> get(() -> {
-    		InstrumentCacheLoader.populateStockCacheFromCsv();
+    		CsvCacheLoader.populateInstrumentCacheFromCsv();
     		return complete("under construction");
     	});
     }
@@ -74,13 +75,6 @@ public class RestController extends AllDirectives {
     		InstrumentCache cache = InstrumentCache.getInstance();
     		return completeOK(cache.getInstrumentSet(instrumentType, exchange), Jackson.marshaller());		
     	})));
-    }
-    
-    public Supplier<Route> loadInstrumentTimeseries() {
-    	return () -> get(() -> parameter("symbol", symbol -> {
-    		InstrumentCacheLoader.loadInstrumentTimeseries(symbol);
-    		return complete("Cache loaded instrument: " + symbol);
-    	}));
     }
 
     public Supplier<Route> getTimeseriesDaily() {
@@ -115,13 +109,16 @@ public class RestController extends AllDirectives {
     public Supplier<Route> getEnrichedTimeseriesDaily() {
     	return () -> get(() -> parameter("symbol", symbol -> {
     		try {
-    			return complete("Under construction");
+    			com.magic.money.core.domain.InstrumentTimeseries raw = InstrumentCacheController.getTimeseriesDaily(symbol);
+    			return completeOK(TechnicalAnalysis.enrichTimeseries(raw), Jackson.marshaller());
     		} catch (Exception e) {
     			e.printStackTrace();
     			return complete("Error");
     		}
     	}));
     }
+    
+    
 	
 
 }

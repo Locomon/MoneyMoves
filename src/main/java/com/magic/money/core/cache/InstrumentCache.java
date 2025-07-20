@@ -1,6 +1,5 @@
 package com.magic.money.core.cache;
 
-import java.security.KeyStore.Entry;
 import java.util.Comparator;
 import java.util.Collections;
 import java.util.Map;
@@ -36,6 +35,12 @@ public class InstrumentCache {
 		}
 		Map<String, Instrument> symbolMap = exchangeSymbolMap.get(exchange);
 		symbolMap.put(instrument.getSymbol(), instrument);
+	}
+	
+	public Set<Instrument> getInstrumentSuperset() {
+		return iexSymbolMap.values().stream().flatMap(m1 -> m1.values().stream()) // Stream<Map<String, Instrument>>
+											 .flatMap(m2 -> m2.values().stream()) // Stream<Instrument>
+											 .collect(Collectors.toCollection(TreeSet::new));									  
 	}
 	
 	public Set<String> getInstrumentTypes() {
