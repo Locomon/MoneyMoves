@@ -1,0 +1,169 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* App container takes full screen */
+.App {
+  display: flex; align-items: center;
+  flex-direction: column;
+  height: 100vh; /* Full viewport height */
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0px 2px 7px #292929;
+  position: relative;
+}
+
+
+/* Mainbody grows to fill remaining height */
+.mainbody {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Header and footer have fixed height and full width */
+.header, .footer {
+  height: 40px; /* or whatever */
+  flex-shrink: 0;
+  width: 100%;
+  padding: 10px;
+  background-color: #b0b0b0;
+}
+
+
+.header {
+  background-color: #b0b0b0;
+  border-bottom: 1px solid #EEE;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  justify-content: center;
+}
+
+
+
+.custom-button {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 4px;
+  background-color: #a0a0a0;
+  border: 2px solid #000;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.custom-button:hover {
+  background-color: #0056b3;
+}
+
+
+/* SplitPane styles */
+.SplitPane {
+  width: 100%;
+  height: 100%;
+  position: relative !important; /* override default absolute */
+}
+
+.left-pane, .right-pane {
+  height: 100%;
+  overflow: auto;
+}
+
+.Pane {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  
+}
+
+.Resizer {
+  background: #000;
+  opacity: 0.2;
+  z-index: 1;
+  box-sizing: border-box;
+  background-clip: padding-box;
+}
+
+.Resizer:hover {
+  transition: all 0.2s ease;
+  opacity: 0.5;
+}
+
+.Resizer.vertical {
+  width: 5px;
+  margin: 0 -2px;
+  cursor: col-resize;
+}
+
+.Resizer.horizontal {
+  height: 5px;
+  margin: -2px 0;
+  cursor: row-resize;
+}
+
+
+/* Card layout */
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: none;
+}
+
+.card-header,
+.card-footer {
+  background-color: #e0e0e0;
+  border: 1px solid #000000;
+  padding: 0.5rem;
+  color: #000;
+}
+
+.card-body {
+  flex: 1 1 auto;
+  overflow: auto;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  padding: 0.5rem;
+  color: #000;
+}
+
+.full-height-card {
+  height: 100%; /* fill the whole screen */
+  display: flex;
+  flex-direction: column;
+}
+.flex-body {
+  flex-grow: 1;
+  overflow: auto; /* enable scrolling if content exceeds space */
+}
+
+.card-full-height {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.card-body-flexible {
+  flex: 1;
+  overflow-y: auto; /* enable scrolling */
+}
+
+ul.custom-tree {
+  list-style: none;
+  padding-left: 1rem;
+}
+
+li.tree-item {
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+}
