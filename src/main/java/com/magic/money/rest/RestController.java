@@ -3,8 +3,8 @@ package com.magic.money.rest;
 import java.util.function.Supplier;
 
 import com.magic.money.core.cache.InstrumentCache;
-import com.magic.money.core.cache.loader.AlphaVantageCacheLoader;
-import com.magic.money.core.cache.loader.CsvCacheLoader;
+import com.magic.money.core.cache.loader.AlphaVantageCsvLoader;
+import com.magic.money.core.cache.loader.FmpCsvLoader;
 import com.magic.money.technical.TechnicalAnalysis;
 import com.magic.money.core.cache.controller.InstrumentCacheController;
 
@@ -17,11 +17,11 @@ public class RestController extends AllDirectives {
     public Route createRoutes() {
         return CorsDirectives.cors(() -> route(
         	//Core Routes
+        	path("loadStocksToCsvFmp", loadStocksToCsvFmp()),
         	path("loadStocksToCsv", loadStocksToCsv()),
-        	path("populateFromCsv", populateFromCsv()),
-        	path("getInstrumentTypes", getInstrumentTypes()),
-        	path("getExchangesForInstrument", getExchangesForInstrument()),
-        	path("getInstrumentMap", getInstrumentMap()),
+        	path("initializeCacheFmp", initializeCacheFmp()),
+        	path("getSectors", getSectors()),
+        	path("getIndustriesForSector", getIndustriesForSector()),
         	path("getInstrumentSet", getInstrumentSet()),
         	path("getTimeseries", getTimeseriesDaily()),
         	path("getTimeseriesString", getTimeseriesDailyString()),
@@ -35,45 +35,44 @@ public class RestController extends AllDirectives {
     
     public Supplier<Route> loadStocksToCsv() {
     	return () -> get(() -> {
-    		AlphaVantageCacheLoader.loadInstrumentDefinitionsToCsv();
+    		AlphaVantageCsvLoader.loadInstrumentDefinitionsToCsv();
     		return complete("LOADED");
     	});
     }
     
-    public Supplier<Route> populateFromCsv() {
+    public Supplier<Route> loadStocksToCsvFmp() {
     	return () -> get(() -> {
-    		CsvCacheLoader.populateInstrumentCacheFromCsv();
-    		return complete("under construction");
+    		FmpCsvLoader.loadInstrumentDefinitionsToCsv();
+    		return complete("LOADED");
     	});
     }
     
-    public Supplier<Route> getInstrumentTypes() {
+    public Supplier<Route> initializeCacheFmp() {
     	return () -> get(() -> {
-    		InstrumentCache cache = InstrumentCache.getInstance();
-    		return completeOK(cache.getInstrumentTypes(), Jackson.marshaller());
+    		InstrumentCacheController.populateInstrumentCache();
+    		return complete("Populated Instrument Cache");
     	});
-    }
-    
-    public Supplier<Route> getExchangesForInstrument() {
-    	return () -> get(() -> parameter("instrumentType", instrumentType -> {
-    		InstrumentCache cache = InstrumentCache.getInstance();
-    		return completeOK(cache.getExchanges(instrumentType), Jackson.marshaller());
-    	}));
     }
 
-    public Supplier<Route> getInstrumentMap() {
-    	return () -> get(() -> parameter("instrumentType", instrumentType
-    						-> parameter("exchange", exchange -> {
+    public Supplier<Route> getSectors() {
+    	return () -> get(() -> {
     		InstrumentCache cache = InstrumentCache.getInstance();
-    		return completeOK(cache.getInstrumentMap(instrumentType, exchange), Jackson.marshaller());		
-    	})));
+    		return completeOK(cache.getSectors(), Jackson.marshaller());
+    	});
+    }
+    
+    public Supplier<Route> getIndustriesForSector() {
+    	return () -> get(() -> parameter("sector", sector -> {
+    		InstrumentCache cache = InstrumentCache.getInstance();
+    		return completeOK(cache.getIndustries(sector), Jackson.marshaller());
+    	}));
     }
     
     public Supplier<Route> getInstrumentSet() {
-    	return () -> get(() -> parameter("instrumentType", instrumentType
-    						-> parameter("exchange", exchange -> {
+    	return () -> get(() -> parameter("sector", sector
+    						-> parameter("industry", industry -> {
     		InstrumentCache cache = InstrumentCache.getInstance();
-    		return completeOK(cache.getInstrumentSet(instrumentType, exchange), Jackson.marshaller());		
+    		return completeOK(cache.getInstrumentSet(sector, industry), Jackson.marshaller());		
     	})));
     }
 

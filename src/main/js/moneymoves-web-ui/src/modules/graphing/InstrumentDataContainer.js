@@ -18,7 +18,7 @@ class InstrumentDataContainer extends Component {
 	}
 	
 	handleInstrumentSelect = (instrument) => {
-		console.log("Instrument=" + instrument.symbol+":" + instrument.name);
+		console.log("Instrument=" + instrument.symbol+":" + instrument.companyName);
 		this.setState({selectedInstrument:instrument})
 	}
 	

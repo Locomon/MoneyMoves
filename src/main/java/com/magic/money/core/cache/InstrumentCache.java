@@ -13,66 +13,49 @@ import com.magic.money.core.domain.InstrumentTimeseries;
 
 public class InstrumentCache {
 	
-	//InstrumentType(Stock^ETF)->Exchange->Symbol
-	private Map<String, Map<String, Map<String, Instrument>>> iexSymbolMap;
-	
 	private Map<String, InstrumentTimeseries> instrumentTimeseriesMap;
 	
+	
+	//Market Cap, 				Sector, Industry, 	Symbol
+	private Map<String, Map<String, Map<String, Instrument>>> sectorIndustrySymbolMap;
+	
 	public InstrumentCache() {
-		this.iexSymbolMap = new TreeMap<>();
 		this.instrumentTimeseriesMap = new TreeMap<>();
+		this.sectorIndustrySymbolMap = new TreeMap<>(); 
 	}
 	
 	public void putInstrument(Instrument instrument) {
-		String assetType = instrument.getAssetType();
-		if (!iexSymbolMap.containsKey(assetType)) {
-			iexSymbolMap.put(assetType, new TreeMap<>());
+		String sector = instrument.getSector();
+		if (!sectorIndustrySymbolMap.containsKey(sector)) {
+			sectorIndustrySymbolMap.put(sector, new TreeMap<>());
 		}
-		Map<String, Map<String, Instrument>> exchangeSymbolMap = iexSymbolMap.get(assetType);
-		String exchange = instrument.getExchange();
-		if (!exchangeSymbolMap.containsKey(exchange)) {
-			exchangeSymbolMap.put(exchange, new TreeMap<>());
+		Map<String, Map<String, Instrument>> industrySymbolMap = sectorIndustrySymbolMap.get(sector);
+		String industry = instrument.getIndustry(); 
+		if (!industrySymbolMap.containsKey(industry) ) {
+			industrySymbolMap.put(industry, new TreeMap<>());
 		}
-		Map<String, Instrument> symbolMap = exchangeSymbolMap.get(exchange);
+		Map<String, Instrument> symbolMap = industrySymbolMap.get(industry);
 		symbolMap.put(instrument.getSymbol(), instrument);
 	}
 	
-	public Set<Instrument> getInstrumentSuperset() {
-		return iexSymbolMap.values().stream().flatMap(m1 -> m1.values().stream()) // Stream<Map<String, Instrument>>
-											 .flatMap(m2 -> m2.values().stream()) // Stream<Instrument>
-											 .collect(Collectors.toCollection(TreeSet::new));									  
+	public Set<String> getSectors() {
+		return sectorIndustrySymbolMap.keySet().stream().collect(Collectors.toSet());
 	}
 	
-	public Set<String> getInstrumentTypes() {
-		return iexSymbolMap.keySet().stream().collect(Collectors.toSet());
+	public Set<String> getIndustries(String sector) {
+		return sectorIndustrySymbolMap.containsKey(sector) ? 
+			sectorIndustrySymbolMap.get(sector).keySet().stream().collect(Collectors.toSet()) : Collections.emptySet();
 	}
 	
-	public Set<String> getExchanges(String instrumentType) {
-		return iexSymbolMap.containsKey(instrumentType) ?
-			iexSymbolMap.get(instrumentType).keySet().stream().collect(Collectors.toSet()) : Collections.emptySet();
-	}
-	
-	public Set<Instrument> getInstrumentSet(String instrumentType, String exchange) {
-		if (!iexSymbolMap.containsKey(instrumentType)) {
+	public Set<Instrument> getInstrumentSet(String sector, String industry) {
+		if (!sectorIndustrySymbolMap.containsKey(sector)) {
 			return Collections.emptySet();
-		} else {
-			Map<String, Map<String, Instrument>> exchangeSymbolMap = iexSymbolMap.get(instrumentType);
-			return exchangeSymbolMap.containsKey(exchange)
-				? exchangeSymbolMap.get(exchange).values().stream().collect(Collectors.toCollection( () -> new TreeSet<>(Comparator.comparing(Instrument::getSymbol)))) : Collections.emptySet();
 		}
+		Map<String, Map<String, Instrument>> industrySymbolMap = sectorIndustrySymbolMap.get(sector);
+		return industrySymbolMap.containsKey(industry)
+			? industrySymbolMap.get(industry).values().stream().collect(Collectors.toCollection( () -> new TreeSet<>(Comparator.comparing(Instrument::getSymbol)))) : Collections.emptySet();
 	}
-	
-	public Map<String, Instrument> getInstrumentMap(String instrumentType, String exchange) {
-		if (!iexSymbolMap.containsKey(instrumentType)) {
-			return Collections.emptyMap();
-		} else {
-			Map<String, Map<String, Instrument>> exchangeSymbolMap = iexSymbolMap.get(instrumentType);
-			return exchangeSymbolMap.containsKey(exchange)
-				? exchangeSymbolMap.get(exchange).entrySet().stream()
-								   .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)) : Collections.emptyMap(); 
-		}
-	}
-	
+
 	public void putInstrumentTimeseries(InstrumentTimeseries timeseries) {
 		this.instrumentTimeseriesMap.put(timeseries.getSymbol(), timeseries);
 	}

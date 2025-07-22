@@ -11,6 +11,7 @@ class TickerList extends Component {
 		super(props);
 		this.state = {
 			iexSymbolMap: new Map(),
+			sectorIndustryMap: new Map(),
 			loadingKeys: new Set(),
 			searchTerm:''
 		};
@@ -18,16 +19,16 @@ class TickerList extends Component {
 
 
 	handleClick = () => {
-		const url = 'http://localhost:8080/getInstrumentTypes';
+		const url = 'http://localhost:8080/getSectors';
 		axios.get(url).then(res => {
-			const instrumentTypes = res.data; // e.g., ["Equities", "Options"]
-			const iexSymbolMap = new Map();
+			const sectors = res.data; // 
+			const sectorIndustryMap = new Map();
 
 			// Pre-fill keys with `undefined` to indicate not-yet-loaded children
-			instrumentTypes.forEach(type=> iexSymbolMap.set(type, {"children": new Map(), "isExpanded":false}));
+			sectors.forEach(type=> sectorIndustryMap.set(type, {"children": new Map(), "isExpanded":false}));
 
 			this.setState({
-				iexSymbolMap: iexSymbolMap
+				sectorIndustryMap: sectorIndustryMap
 			});
 		});
 	};
@@ -36,19 +37,18 @@ class TickerList extends Component {
 	  this.setState({ searchTerm: e.target.value.toLowerCase() });
 	};
 
-
-	toggleInstrumentExpand = (instrumentType) => {
-		const iexSymbolMap = this.state.iexSymbolMap;
-		const instrumentContainer = iexSymbolMap.get(instrumentType);
-		instrumentContainer.isExpanded = !instrumentContainer.isExpanded;
-		if(instrumentContainer.isExpanded && instrumentContainer.children.size === 0) {
-			const url = 'http://localhost:8080/getExchangesForInstrument?instrumentType='+instrumentType;
+	toggleSectorExpand = (sector) => {
+		const sectorIndustryMap = this.state.sectorIndustryMap;
+		const sectorContainer = sectorIndustryMap.get(sector);
+		sectorContainer .isExpanded = !sectorContainer .isExpanded;
+		if(sectorContainer .isExpanded && sectorContainer .children.size === 0) {
+			const url = 'http://localhost:8080/getIndustriesForSector?sector='+sector;
 			axios.get(url).then(res =>  {
 				console.log("resData=" + res.data);
-				const exchanges = res.data;
-				const exchangeSymbolMap = new Map();
-				exchanges.forEach(exchange => exchangeSymbolMap.set(exchange, {"children":[], "isExpanded":false}));
-				instrumentContainer.children=exchangeSymbolMap;
+				const industries = res.data;
+				const industrySymbolMap = new Map();
+				industries.forEach(industry => industrySymbolMap.set(industry, {"children":[], "isExpanded":false}));
+				sectorContainer.children=industrySymbolMap;
 				this.setState({});
 			});
 		} else {
@@ -56,17 +56,17 @@ class TickerList extends Component {
 		}
 	};
 	
-	toggleExchangeExpand = (instrumentType, exchange) => {
-		const iexSymbolMap = this.state.iexSymbolMap;
-		const instrumentContainer = iexSymbolMap.get(instrumentType);
-		if (!instrumentContainer) { return; }
-		const exchangeContainer = instrumentContainer.children.get(exchange);
-		exchangeContainer.isExpanded = !exchangeContainer.isExpanded;
-		if (exchangeContainer.isExpanded && exchangeContainer.children.length === 0) {
-			const url = 'http://localhost:8080/getInstrumentSet?instrumentType='+instrumentType+'&exchange='+exchange;
+	toggleIndustryExpand = (sector, industry) => {
+		const sectorIndustryMap = this.state.sectorIndustryMap;
+		const sectorContainer = sectorIndustryMap.get(sector);
+		if (!sectorContainer) { return; }
+		const industryContainer = sectorContainer.children.get(industry);
+		industryContainer.isExpanded = !industryContainer.isExpanded;
+		if (industryContainer.isExpanded && industryContainer.children.length === 0) {
+			const url = 'http://localhost:8080/getInstrumentSet?sector='+sector+'&industry='+industry;
 			axios.get(url).then(res => {
 				const symbols = res.data;
-				exchangeContainer.children = symbols;
+				industryContainer.children = symbols;
 				this.setState({});
 			});
 		} else {
@@ -81,7 +81,7 @@ class TickerList extends Component {
 
 
 	render() {
-		const iexSymbolMap = this.state.iexSymbolMap;
+		const sectorIndustryMap = this.state.sectorIndustryMap;
 		
 		return(
 			<Card className="card-full-height">
@@ -101,35 +101,35 @@ class TickerList extends Component {
 				</CardHeader>
 				<CardBody className="card-body-flexible">
 					<ul>
-						{Array.from(iexSymbolMap.entries()).map(entry => {
-							const instrumentType = entry[0];
-							const instrumentValue = entry[1];
-							const isInstrumentExpanded = instrumentValue.isExpanded;
-							const FolderIcon = isInstrumentExpanded ? FaFolderOpen : FaFolder;
+						{Array.from(sectorIndustryMap.entries()).map(entry => {
+							const sectorType = entry[0];
+							const sectorValue = entry[1];
+							const isSectorExpanded = sectorValue.isExpanded;
+							const FolderIcon = isSectorExpanded ? FaFolderOpen : FaFolder;
 							return (
-								<li key={instrumentType}>
-									<span onClick={() => this.toggleInstrumentExpand(instrumentType)} style={{ cursor: 'pointer' }}>
+								<li key={sectorType}>
+									<span onClick={() => this.toggleSectorExpand(sectorType)} style={{ cursor: 'pointer' }}>
 									  <FolderIcon style={{ marginRight: '8px' }} />
-									  {instrumentType}
+									  {sectorType}
 									</span>
-									{isInstrumentExpanded && instrumentValue.children && instrumentValue.children.size > 0 && (
+									{isSectorExpanded && sectorValue.children && sectorValue.children.size > 0 && (
 									<ul style={{ paddingLeft: '20px' }}>
 										{
-										Array.from(instrumentValue.children.entries()).map(([exchangeKey, exchangeValue]) => {
-											const isExchangeExpanded = exchangeValue.isExpanded;
-											const ExchangeFolderIcon = isExchangeExpanded ? FaFolderOpen : FaFolder;
-											return (<li key={instrumentType + "-" + exchangeKey}>
-												<span onClick={() => this.toggleExchangeExpand(instrumentType, exchangeKey)} style={{ cursor: 'pointer' }}>
-													<ExchangeFolderIcon style={{ marginRight: '8px' }} />
-													{exchangeKey}											
+										Array.from(sectorValue.children.entries()).map(([industryKey, industryValue]) => {
+											const isIndustryExpanded = industryValue.isExpanded;
+											const IndustryFolderIcon = isIndustryExpanded ? FaFolderOpen : FaFolder;
+											return (<li key={sectorType + "-" + industryKey}>
+												<span onClick={() => this.toggleIndustryExpand(sectorType, industryKey)} style={{ cursor: 'pointer' }}>
+													<IndustryFolderIcon style={{ marginRight: '8px' }} />
+													{industryKey}											
 												</span>
 												{
-													isExchangeExpanded && exchangeValue.children && exchangeValue.children.length > 0 && (
+													isIndustryExpanded && industryValue.children && industryValue.children.length > 0 && (
 														<ul style={{ paddingLeft: '40px' }}>
-															{exchangeValue.children
+															{industryValue.children
 																		  .filter(instrument => instrument.symbol.toLowerCase().startsWith(this.state.searchTerm))
 																		  .map(instrument => {
-																return (<li key={instrumentType + "-" + exchangeKey + "-" + instrument.symbol}
+																return (<li key={sectorType + "-" + industryKey + "-" + instrument.symbol}
 																			onClick={() => this.handleInstrumentSelect(instrument)}
 																			style={{ cursor: 'pointer' }}>
 																			{instrument.symbol}

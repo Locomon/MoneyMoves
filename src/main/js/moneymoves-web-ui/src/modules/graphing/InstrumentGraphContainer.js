@@ -255,18 +255,14 @@ class InstrumentGraphContainer extends Component {
 					<Row>
 						<div style={{ fontWeight: 'bold' }}>
 							{selectedInstrument
-								? `${selectedInstrument.symbol}: ${selectedInstrument.name}`
+								? `${selectedInstrument.symbol}: ${selectedInstrument.companyName}`
 								: 'Please select an Instrument'}
 						</div>
 					</Row>
-					<Row className="mt-2">
-						<Button 
-							color="primary" 
-							onClick={this.handleLoadTimeseries} 
-							disabled={!selectedInstrument || loading}
-						>
-							{loading ? 'Loading...' : 'Load Timeseries'}
-						</Button>
+					<Row>
+						<Col><b>Show SMA</b><input type="checkbox" value="Show SMA"/></Col>
+						<Col><b>Show Supports/Resistances</b><input type="checkbox" value="Show Supports/Resistances"/></Col>
+						<Col><b>Show MACD</b><input type="checkbox" value="Show MACD"/></Col>
 					</Row>
 				</CardHeader>
 				<CardBody className="card-body-flexible">
@@ -298,6 +294,17 @@ class InstrumentGraphContainer extends Component {
 						</Col>
 					</Row>
 				</CardBody>
+				<CardFooter>
+					<Row className="mt-2">
+						<Button 
+							color="primary" 
+							onClick={this.handleLoadTimeseries} 
+							disabled={!selectedInstrument || loading}
+						>
+							{loading ? 'Loading...' : 'Load Timeseries'}
+						</Button>
+					</Row>
+				</CardFooter>
 			</Card>
 		);
 	}
