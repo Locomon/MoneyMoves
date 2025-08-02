@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Properties;
 
 import com.magic.money.core.cache.InstrumentCache;
+import com.magic.money.core.cache.MARKET_CAP;
 import com.magic.money.core.domain.Instrument;
 import com.opencsv.CSVReader;
 
 public class FmpCacheLoader {
 
 	
-	public static boolean populateInstrumentCacheFromCsvForSector(FMP_SECTOR sector) {
+	public static boolean populateInstrumentCacheFromCsvForSector(FMP_SECTOR sector, MARKET_CAP marketCap) {
 		InstrumentCache cache = InstrumentCache.getInstance();
 		try {
 			Properties config = new Properties();
@@ -35,7 +36,7 @@ public class FmpCacheLoader {
 	            Files.createDirectories(metadataDir);
 	        }
 	        // Step 4: Reference listing.csv in Metadata directory
-	        Path listingCsv = metadataDir.resolve(sector.name().toLowerCase() + ".csv");
+	        Path listingCsv = metadataDir.resolve(sector.name().toLowerCase() + "_" + marketCap.name().toLowerCase() + ".csv");
 	        if(Files.notExists(listingCsv)) {
 	        	return false;
 	        }

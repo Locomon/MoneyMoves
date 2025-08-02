@@ -16,19 +16,20 @@ import java.util.Properties;
 import org.springframework.web.client.RestTemplate;
 
 import com.magic.money.core.ApiKeyManager;
+import com.magic.money.core.cache.MARKET_CAP;
 public class FmpCsvLoader {
 	
 	public static void loadInstrumentDefinitionsToCsv() {
 		try {
 			for (FMP_SECTOR sector : FMP_SECTOR.values()) {
-				loadInstrumentDefinitionsToCsvForSector(sector);
+				loadInstrumentDefinitionsToCsvForSector(sector, MARKET_CAP.MEDIUM);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void loadInstrumentDefinitionsToCsvForSector(FMP_SECTOR sector) {
+	public static void loadInstrumentDefinitionsToCsvForSector(FMP_SECTOR sector, MARKET_CAP marketCap) {
 		try {
 			Properties config = new Properties();
 			InputStream input = FmpCsvLoader.class.getClassLoader().getResourceAsStream("config.properties");
@@ -46,11 +47,20 @@ public class FmpCsvLoader {
 	            Files.createDirectories(metadataDir);
 	        }
 	        String sectorStr = URLEncoder.encode(sector.name().replaceAll("_", " ").toLowerCase());
-			Path OUTPUT_CSV = metadataDir.resolve(sector.name().toLowerCase() + ".csv");
+			Path OUTPUT_CSV = metadataDir.resolve(sector.name().toLowerCase() + "_" + marketCap.name().toLowerCase() + ".csv");
 	        
 			String apiKey = ApiKeyManager.getKey("fmp");
-	        String urlStr = "https://financialmodelingprep.com/api/v3/stock-screener?apikey=" + apiKey 
-	        												+ "&datatype=csv&sector=" + sectorStr;
+	        StringBuilder urlStrBuilder = 
+	        	new StringBuilder("https://financialmodelingprep.com/api/v3/stock-screener?apikey=").append(apiKey)
+	        		.append("&datatype=csv&country=US&sector=").append(sectorStr);
+	        if (marketCap == MARKET_CAP.SMALL) {
+	        	urlStrBuilder.append("&marketCapLowerThan=2000000000");
+	        } else if (marketCap == MARKET_CAP.MEDIUM) {
+	        	urlStrBuilder.append("&marketCapMoreThan=2000000000&marketCapLowerThan=10000000000");
+	        } else if (marketCap == MARKET_CAP.LARGE) {
+	        	urlStrBuilder.append("&marketCapMoreThan=10000000000");
+	        }
+			String urlStr = urlStrBuilder.toString();
 	        
 			URL url = new URL(urlStr);
 	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();

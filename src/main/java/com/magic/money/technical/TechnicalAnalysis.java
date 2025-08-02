@@ -1,7 +1,6 @@
 package com.magic.money.technical;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +33,9 @@ public class TechnicalAnalysis {
 		
 		Map<LocalDate, Double> sma14Map = calculateSMA(rawDatapointMap, sortedDates, 14);
 		Map<LocalDate, Double> sma60Map = calculateSMA(rawDatapointMap, sortedDates, 60);
-
+		
+		Map<LocalDate, Double> emaFastMap = calculateEMA(rawDatapointMap, sortedDates, 12);
+		Map<LocalDate, Double> emaSlowMap = calculateEMA(rawDatapointMap, sortedDates, 26);
 
 		for(int i = 1; i < sortedDates.size(); i++) {
 			LocalDate cobDate = sortedDates.get(i);
@@ -50,6 +51,15 @@ public class TechnicalAnalysis {
 			if (sma60 == null) {
 				sma60 = Double.NaN;
 			}
+			Double emaFast = emaFastMap.get(cobDate);
+			Double emaSlow = emaSlowMap.get(cobDate);
+			Double macd = emaFast != null && emaSlow != null ? emaFast - emaSlow : Double.NaN;
+			if (emaFast == null) {
+				emaFast = Double.NaN;
+			}
+			if (emaSlow == null) {
+				emaSlow = Double.NaN;
+			}
 			InstrumentTimeseriesDatapoint prevDatapoint = rawDatapointMap.get(sortedDates.get(i - 1));
 			double pivot = ( prevDatapoint.getHigh() + prevDatapoint.getLow() + prevDatapoint.getClose() ) / 3;
 			double support1 = ( pivot * 2) - prevDatapoint.getHigh();
@@ -61,27 +71,23 @@ public class TechnicalAnalysis {
 									   				   .rsi(rsi)
 									   				   .support1(support1).support2(support2)
 									   				   .resistance1(resistance1).resistance2(resistance2)
-									   				   .sma14(sma14).sma60(sma60).build());
+									   				   .sma14(sma14).sma60(sma60)
+									   				   .emaFast(emaFast).emaSlow(emaSlow).macd(macd).build());
 		}
 		return builder.build();
 	}
 	
-	public static Map<LocalDate, Double> calculateRollingRSI(
-	    Map<LocalDate, InstrumentTimeseriesDatapoint> data,
-	    List<LocalDate> sortedDates,
-	    int period
-	) {
+	public static Map<LocalDate, Double>
+		calculateRollingRSI(Map<LocalDate, InstrumentTimeseriesDatapoint> data,
+												   List<LocalDate> sortedDates, int period) {
 	    Map<LocalDate, Double> rsiMap = new HashMap<>();
 	    Map<LocalDate, Pair<Double, Double>> avgGainLossMap = new HashMap<>();
-	
 	    //Collections.sort(sortedDates);
-	
 	    if (sortedDates.size() <= period) return rsiMap;
 	
 	    // Phase 1: Seed initial averages
 	    double totalGain = 0.0;
 	    double totalLoss = 0.0;
-	
 	    for (int i = 1; i <= period; i++) {
 	        double delta = data.get(sortedDates.get(i)).getClose()
 	                     - data.get(sortedDates.get(i - 1)).getClose();
@@ -218,34 +224,6 @@ public class TechnicalAnalysis {
 	        return Pair.of(totalGain / days, totalLoss / days);
 	    }
 	}
-
-	
-	public static double calculateRsiBase(LocalDate cobDate, int numDays, Map<LocalDate, InstrumentTimeseriesDatapoint> closeMap) {
-		LocalDate tempDate = cobDate;
-		LocalDate tempPrevDate = tempDate.minusDays(1);
-		while (!closeMap.containsKey(tempPrevDate)) {
-			tempPrevDate = tempPrevDate.minusDays(1);
-		}
-		List<Double> percentageGains = new ArrayList<>();
-		List<Double> percentageLosses = new ArrayList<>();
-				
-		for (int dayCalculated = 0 ; dayCalculated < numDays - 1; dayCalculated++) {
-			double cobVal = closeMap.get(tempDate).getClose();
-			double pcobVal = closeMap.get(tempPrevDate).getClose();
-			double percentDiff = 1 - ((cobVal - pcobVal) / (pcobVal));
-			(cobVal > pcobVal ? percentageGains : percentageLosses).add(Math.abs(percentDiff));
-			tempDate = tempPrevDate;
-			tempPrevDate = tempPrevDate.minusDays(1);
-			while (!closeMap.containsKey(tempPrevDate)) {
-				tempPrevDate = tempPrevDate.minusDays(1);
-			}	
-		}
-		double avgPercentageGains = !percentageGains.isEmpty() ? percentageGains.stream().mapToDouble(gain -> gain.doubleValue()).average().orElse(Double.NaN) : 1.0;
-		double avgPercentageLosses = !percentageLosses.isEmpty() ? percentageLosses.stream().mapToDouble(gain -> gain.doubleValue()).average().orElse(Double.NaN) : 1.0;
-		System.out.println(avgPercentageGains + "," + avgPercentageLosses);
-		double firstPart = calculateRsiFirstPart(avgPercentageGains, avgPercentageLosses);
-		return firstPart;
-	}
 	
 	public static double calculateRsiFirstPart(double avgPercentageGains, double avgPercentageLosses) {
 		return 100 - (100 / (1 + (avgPercentageGains/avgPercentageLosses)));
@@ -253,30 +231,53 @@ public class TechnicalAnalysis {
 	
 	public static Map<LocalDate, Double> calculateSMA(
 		    Map<LocalDate, InstrumentTimeseriesDatapoint> data,
-		    List<LocalDate> sortedDates,
-		    int period
-		) {
-		    Map<LocalDate, Double> smaMap = new HashMap<>();
-		    double sum = 0.0;
+		    List<LocalDate> sortedDates, int period) {
+	    Map<LocalDate, Double> smaMap = new HashMap<>();
+	    double sum = 0.0;
 
-		    for (int i = 0; i < sortedDates.size(); i++) {
-		        LocalDate date = sortedDates.get(i);
-		        double close = data.get(date).getClose();
-		        sum += close;
+	    for (int i = 0; i < sortedDates.size(); i++) {
+	        LocalDate date = sortedDates.get(i);
+	        double close = data.get(date).getClose();
+	        sum += close;
 
-		        if (i >= period - 1) {
-		            if (i >= period) {
-		                LocalDate dateOut = sortedDates.get(i - period);
-		                sum -= data.get(dateOut).getClose();
-		            }
-		            smaMap.put(date, sum / period);
-		        } else {
-		            smaMap.put(date, Double.NaN); // Not enough data yet
-		        }
-		    }
-		    return smaMap;
-		}
+	        if (i >= period - 1) {
+	            if (i >= period) {
+	                LocalDate dateOut = sortedDates.get(i - period);
+	                sum -= data.get(dateOut).getClose();
+	            }
+	            smaMap.put(date, sum / period);
+	        } else {
+	            smaMap.put(date, Double.NaN); // Not enough data yet
+	        }
+	    }
+	    return smaMap;
+	}
+
+	private static Map<LocalDate, Double> calculateEMA(
+			Map<LocalDate, InstrumentTimeseriesDatapoint> rawDatapointMap,
+			List<LocalDate> sortedDates,
+			int period) {
+	    Map<LocalDate, Double> emaMap = new HashMap<>();
+	    double alpha = 2.0 / (period + 1);
+	    Double previousEma = null;
+	    for (LocalDate date : sortedDates) {
+	        InstrumentTimeseriesDatapoint point = rawDatapointMap.get(date);
+	        if (point == null) continue;
+
+	        Double value = point.getClose();
+
+	        if (previousEma == null) {
+	            previousEma = value; // Seed EMA with first available value
+	        } else {
+	            previousEma = alpha * value + (1 - alpha) * previousEma;
+	        }
+
+	        emaMap.put(date, previousEma);
+	    }
+
+	    return emaMap;
+	}
+
 
 
 }
-

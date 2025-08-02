@@ -15,6 +15,9 @@ public class EnrichedTimeseriesDatapoint {
 	private double resistance2;
 	private double sma14;
 	private double sma60;
+	private double emaFast;
+	private double emaSlow;
+	private double macd;
 	
 	public EnrichedTimeseriesDatapoint(Builder builder) {
 		this.unenrichedDatapoint = builder.unenrichedDatapoint;
@@ -25,6 +28,10 @@ public class EnrichedTimeseriesDatapoint {
 		this.resistance2 = builder.resistance2;
 		this.sma14 = builder.sma14;
 		this.sma60 = builder.sma60;
+		this.emaFast = builder.emaFast;
+		this.emaSlow = builder.emaSlow;
+		this.macd = builder.macd;
+		
 	}	
 	public double getOpen() { return unenrichedDatapoint.getOpen(); }
 	public double getClose() { return unenrichedDatapoint.getClose(); }
@@ -39,6 +46,9 @@ public class EnrichedTimeseriesDatapoint {
 	public double getResistance2() { return resistance2; }
 	public double getSma14() { return sma14; }
 	public double getSma60() { return sma60; }
+	public double getEmaFast() { return emaFast; }
+	public double getEmaSlow() { return emaSlow; }
+	public double getMacd() { return macd; }
 	
 	public static Builder builder(InstrumentTimeseriesDatapoint unenrichedDatapoint) {
 		return new Builder(unenrichedDatapoint);
@@ -53,6 +63,9 @@ public class EnrichedTimeseriesDatapoint {
 		private double resistance2;
 		private double sma14;
 		private double sma60;
+		private double emaFast;
+		private double emaSlow;
+		private double macd;
 		
 		private Builder(InstrumentTimeseriesDatapoint unenrichedDatapoint) {
 			this.unenrichedDatapoint = unenrichedDatapoint;
@@ -83,6 +96,18 @@ public class EnrichedTimeseriesDatapoint {
 		}
 		public Builder sma60(double sma60) {
 			this.sma60 = sma60;
+			return this;
+		}
+		public Builder emaFast(double emaFast) {
+			this.emaFast = emaFast;
+			return this;
+		}
+		public Builder emaSlow(double emaSlow) {
+			this.emaSlow = emaSlow;
+			return this;
+		}
+		public Builder macd(double macd) {
+			this.macd = macd;
 			return this;
 		}
 		

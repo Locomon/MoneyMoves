@@ -2,29 +2,24 @@ html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 /* App container takes full screen */
 .App {
-  display: flex; align-items: center;
+  display: flex;
   flex-direction: column;
-  height: 100vh; /* Full viewport height */
-  width: 100%;
-  box-sizing: border-box;
-  background-color: #ffffff;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0px 2px 7px #292929;
-  position: relative;
+  height: 100%;
 }
 
 
 /* Mainbody grows to fill remaining height */
 .mainbody {
-  flex: 1;
-  display: flex;
+  height: 100%;  /* 💡 40px header + 40px footer */
   overflow: hidden;
-  width: 100%;
+  display: flex;
+  position: relative;
+  flex-direction: column;
 }
 
 /* Header and footer have fixed height and full width */
@@ -65,11 +60,20 @@ html, body, #root {
 }
 
 
+.InstrumentDataContainer {
+  height: 100%;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+
 /* SplitPane styles */
 .SplitPane {
-  width: 100%;
-  height: 100%;
-  position: relative !important; /* override default absolute */
+  height: 100% !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  position: relative !important;
 }
 
 .left-pane, .right-pane {
@@ -79,12 +83,24 @@ html, body, #root {
 
 .Pane {
   display: flex !important;
-  flex-direction: column !important;
-  height: 100% !important;
-  
+  min-height: 0 !important;
+  flex: 1 1 auto;
 }
 
-.Resizer {
+.Horizontal-Pane {
+  display: flex;
+  flex: 1;
+  min-height: 0 !important;
+  overflow: hidden;
+}
+
+.Vertical-Pane {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+  height: 100% !important;
+}
+.Resizer {	
   background: #000;
   opacity: 0.2;
   z-index: 1;
@@ -98,16 +114,45 @@ html, body, #root {
 }
 
 .Resizer.vertical {
-  width: 5px;
+  width: 5px!important;
+  min-width: 5px!important;
   margin: 0 -2px;
   cursor: col-resize;
 }
 
 .Resizer.horizontal {
-  height: 5px;
+  height: 5px!important;
+  min-height: 5px!important;
   margin: -2px 0;
   cursor: row-resize;
 }
+
+.Vertical-Pane,
+.Horizontal-Pane,
+.Pane,
+.split-pane,
+.SplitPane {
+  min-height: 0 !important;
+  min-width: 0 !important;
+  max-height: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  flex-shrink: 1 !important;
+}
+
+.split-pane-vertical,
+.Pane,
+.card-full-height,
+.card-body-flexible,
+.chart-container,
+.chart-left,
+.chart-right,
+.chart-half {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 
 
 /* Card layout */
@@ -154,7 +199,26 @@ html, body, #root {
 
 .card-body-flexible {
   flex: 1;
-  overflow-y: auto; /* enable scrolling */
+  overflow: hidden;
+  overflow-Y: scroll;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-container {
+  flex-direction: row;
+  flex: 1;
+  overflow: hidden;
+}
+
+.chart-left, .chart-right {
+  flex: 1;
+  overflow: hidden;
+}
+
+.chart-half {
+  flex: 1;
+  overflow: hidden;
 }
 
 ul.custom-tree {

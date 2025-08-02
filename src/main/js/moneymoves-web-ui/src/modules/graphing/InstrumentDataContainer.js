@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
 import SplitPane, { Pane } from 'react-split-pane';
-import { Card, CardHeader, CardBody, CardFooter } from 'reactstrap';
+import { Card, CardHeader, CardBody, CardFooter, Row, Col } from 'reactstrap';
 import '../../App.css';
 import InstrumentGraphContainer from './InstrumentGraphContainer.js';
 import TickerList from './TickerList.js';
-
+import InstrumentFundamentalsTabContainer from './InstrumentFundamentalsTabContainer.js';
 
 class InstrumentDataContainer extends Component {
 	
 	constructor(props) {
 		super(props);
 		this.handleInstrumentSelect = this.handleInstrumentSelect.bind(this);
-		this.setState({selectedInstrument:"TEST"});	
 	}
 	
 	componentDidMount() {
+		this.setState({selectedInstrument:"TEST"});	
 	}
 	
 	handleInstrumentSelect = (instrument) => {
@@ -27,17 +27,35 @@ class InstrumentDataContainer extends Component {
 		return (
 			<SplitPane	split="vertical"
 						defaultSize="25%"
-						minSize="10%"
-						maxSize="50%"
 						className="custom-split-pane "
 						style={{height:"100%"}}
 						paneStyle={{display:'flex', flexDirection: 'column'}}>
-						
-			      <Pane style={{ display: 'flex', flexDirection: 'column' }}>
+			 			
+				<Pane className="Vertical-Pane">
 					<TickerList handleInstrumentSelect={this.handleInstrumentSelect}/>
 				</Pane>
-			      <Pane style={{ display: 'flex', flexDirection: 'column' }}>
-					<InstrumentGraphContainer selectedInstrument={selectedInstrument}/>
+				<Pane className="Vertical-Pane">
+					<Card className="card-full-height">
+						<CardHeader>
+							<Row>
+								<div style={{ fontWeight: 'bold' }}>
+									{selectedInstrument
+										? `${selectedInstrument.symbol}: ${selectedInstrument.companyName}`
+										: 'Please select an Instrument'}
+								</div>
+							</Row>
+						</CardHeader>
+						<SplitPane	split="horizontal"
+									defaultSize="65%"
+									primary="second">								
+							<Pane className="Horizontal-Pane">
+								<InstrumentFundamentalsTabContainer selectedInstrument={selectedInstrument}/>	
+							</Pane>
+							<Pane className="Horizontal-Pane">
+								<InstrumentGraphContainer selectedInstrument={selectedInstrument}/>
+							</Pane>
+						</SplitPane>
+					</Card>
 				</Pane>
 			</SplitPane>		
 		);

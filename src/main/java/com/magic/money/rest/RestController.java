@@ -20,9 +20,8 @@ public class RestController extends AllDirectives {
         	path("loadStocksToCsvFmp", loadStocksToCsvFmp()),
         	path("loadStocksToCsv", loadStocksToCsv()),
         	path("initializeCacheFmp", initializeCacheFmp()),
-        	path("getSectors", getSectors()),
-        	path("getIndustriesForSector", getIndustriesForSector()),
-        	path("getInstrumentSet", getInstrumentSet()),
+        	path("clearSectorIndustrySymbolMap", clearSectorIndustrySymbolMap()),
+        	path("getSectorIndustrySymbolMap", getSectorIndustrySymbolMap()),
         	path("getTimeseries", getTimeseriesDaily()),
         	path("getTimeseriesString", getTimeseriesDailyString()),
         	//Technical Routes
@@ -53,27 +52,18 @@ public class RestController extends AllDirectives {
     		return complete("Populated Instrument Cache");
     	});
     }
-
-    public Supplier<Route> getSectors() {
+    
+    public Supplier<Route> getSectorIndustrySymbolMap() {
     	return () -> get(() -> {
-    		InstrumentCache cache = InstrumentCache.getInstance();
-    		return completeOK(cache.getSectors(), Jackson.marshaller());
+    		return completeOK(InstrumentCacheController.getOrPopulateSectorIndustrySymbolMap(), Jackson.marshaller());
     	});
     }
     
-    public Supplier<Route> getIndustriesForSector() {
-    	return () -> get(() -> parameter("sector", sector -> {
-    		InstrumentCache cache = InstrumentCache.getInstance();
-    		return completeOK(cache.getIndustries(sector), Jackson.marshaller());
-    	}));
-    }
-    
-    public Supplier<Route> getInstrumentSet() {
-    	return () -> get(() -> parameter("sector", sector
-    						-> parameter("industry", industry -> {
-    		InstrumentCache cache = InstrumentCache.getInstance();
-    		return completeOK(cache.getInstrumentSet(sector, industry), Jackson.marshaller());		
-    	})));
+    public Supplier<Route> clearSectorIndustrySymbolMap() {
+    	return () -> get(() -> {
+    		InstrumentCache.getInstance().clearSectorIndustrySectorMap();
+    		return complete("Successfully Cleared SectorIndustrySymbolMap");
+    	});
     }
 
     public Supplier<Route> getTimeseriesDaily() {

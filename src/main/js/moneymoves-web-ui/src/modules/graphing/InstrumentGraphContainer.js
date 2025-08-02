@@ -48,7 +48,8 @@ class InstrumentGraphContainer extends Component {
 					resistance: data.resistance1,
 					resistance2: data.resistance2,
 					sma14: data.sma14,
-					sma60: data.sma60
+					sma60: data.sma60,
+					macd: data.macd
 				}))
 				.sort((a, b) => new Date(a.date) - new Date(b.date)); // Ensure correct order
 
@@ -213,6 +214,38 @@ class InstrumentGraphContainer extends Component {
 	    };
 	};
 
+	getMACDChartOptions = () => {
+	    const { timeseries, zoomStart, zoomEnd } = this.state;
+	    const dates = timeseries.map(entry => entry.date);
+	    const macd = timeseries.map(entry => entry.macd ?? null);
+
+	    return {
+	        title: {
+	            text: 'MACD',
+	            left: 0
+	        },
+	        tooltip: {
+	            trigger: 'axis'
+	        },
+			xAxis: {
+				type: 'category',
+				data: dates,
+				min: (zoomStart / 100) * (dates.length - 1),
+				max: (zoomEnd / 100) * (dates.length - 1)
+			},
+	        yAxis: {
+	            min: -5,
+	            max: 5,
+	            splitLine: { show: true }
+	        },
+	        series: [{
+	            type: 'line',
+	            data: macd,
+	            smooth: true,
+	            lineStyle: { color: '#5470C6' }
+	        }]
+	    };
+	};
 	
 
 	getVolumeChartOptions = () => {
@@ -251,61 +284,67 @@ class InstrumentGraphContainer extends Component {
 
 		return (
 			<Card className="card-full-height">
-				<CardHeader>
-					<Row>
-						<div style={{ fontWeight: 'bold' }}>
-							{selectedInstrument
-								? `${selectedInstrument.symbol}: ${selectedInstrument.companyName}`
-								: 'Please select an Instrument'}
-						</div>
-					</Row>
-					<Row>
-						<Col><b>Show SMA</b><input type="checkbox" value="Show SMA"/></Col>
-						<Col><b>Show Supports/Resistances</b><input type="checkbox" value="Show Supports/Resistances"/></Col>
-						<Col><b>Show MACD</b><input type="checkbox" value="Show MACD"/></Col>
-					</Row>
-				</CardHeader>
-				<CardBody className="card-body-flexible">
-					<Row>
-  						<Col md="7" style={{ borderStyle: 'solid' }}>
-  						{timeseries.length > 0 ? (
-							<ReactECharts 	option={this.getCandlestickChartOptions()} style={{ height: '600px' }}
-											onEvents={{ dataZoom: this.handleDataZoom}} />
-						) : (
-							<div style={{ color: '#666' }}>Chart will display here after loading data.</div>
-						)}
-						</Col>
-						<Col md="5" style={{ borderStyle: 'solid' }}>
-							<Row>
-								{timeseries.length > 0 ? 
-									(<ReactECharts option={this.getVolumeChartOptions()} style={{height: '300px'}}/>)
-									: (
-										<div style={{ color: '#666' }}>Chart will display here after loading data.</div>
-									)}
-							</Row>
-							<Row>
-								{timeseries.length > 0 ?
-									(<ReactECharts option={this.getRSIChartOptions()} style={{height: '300px'}}/>)
-									: (
-										<div style={{ color: '#666' }}>Chart will display here after loading data.</div>
-									)}									
-								}
-							</Row>
-						</Col>
-					</Row>
-				</CardBody>
-				<CardFooter>
-					<Row className="mt-2">
-						<Button 
-							color="primary" 
-							onClick={this.handleLoadTimeseries} 
-							disabled={!selectedInstrument || loading}
-						>
-							{loading ? 'Loading...' : 'Load Timeseries'}
-						</Button>
-					</Row>
-				</CardFooter>
+			<CardHeader>
+			  <Row className="mt-2">
+			  	<Col><h4>Timeseries Data</h4></Col>
+			  	<Col>
+			    <Button
+			      color="primary"
+			      onClick={this.handleLoadTimeseries}
+			      disabled={!selectedInstrument || loading}
+			    >
+			      {loading ? 'Loading...' : 'Load Timeseries'}
+			    </Button>
+				</Col>
+			  </Row>
+			</CardHeader>
+  
+			<CardBody className="card-body-flexible">
+			  
+			    <div className="chart-container">
+			      <div className="chart-left">
+			        {timeseries.length > 0 ? (
+			          <ReactECharts
+			            option={this.getCandlestickChartOptions()}
+			            style={{ height: '100%', width: '100%' }}
+			            onEvents={{ dataZoom: this.handleDataZoom }}
+			          />
+			        ) : (
+			          <div style={{ color: '#666' }}>Chart will display here after loading data.</div>
+			        )}
+			      </div>
+
+			      <div className="chart-right">
+				  
+			        <div className="chart-half">
+			          {timeseries.length > 0 ? (
+			            <ReactECharts
+			              option={this.getVolumeChartOptions()}
+			              style={{ height: '100%', width: '100%' }}
+			            />
+			          ) : (
+			            <div style={{ color: '#666' }}>Chart will display here after loading data.</div>
+			          )}
+			        </div>
+
+			        <div className="chart-half">
+			          {timeseries.length > 0 ? (
+			            <ReactECharts
+			              option={this.getRSIChartOptions()}
+			              style={{ height: '100%', width: '100%' }}
+			            />
+			          ) : (
+			            <div style={{ color: '#666' }}>Chart will display here after loading data.</div>
+			          )}
+			        </div>
+
+
+			      </div>
+			    </div>
+			  </CardBody>
+
 			</Card>
+
 		);
 	}
 }
