@@ -1,11 +1,12 @@
 package com.magic.money.technical;
 
-import com.magic.money.core.domain.InstrumentTimeseries;
-import com.magic.money.core.domain.InstrumentTimeseriesDatapoint;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.magic.money.core.domain.InstrumentTimeseries;
+import com.magic.money.core.domain.InstrumentTimeseriesDatapoint;
 
 
 public class Algorithms {

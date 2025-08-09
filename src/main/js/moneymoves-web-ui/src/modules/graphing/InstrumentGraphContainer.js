@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import SplitPane, { Pane } from 'react-split-pane';
 import { Card, CardHeader, CardBody, CardFooter, Row, Col, Button } from 'reactstrap';
 import ReactECharts from 'echarts-for-react';
 import axios from 'axios';
@@ -300,33 +301,29 @@ class InstrumentGraphContainer extends Component {
 			</CardHeader>
   
 			<CardBody className="card-body-flexible">
-			  
-			    <div className="chart-container">
-			      <div className="chart-left">
+				<SplitPane	split="vertical"
+							defaultSize="50%"
+							className="custom-split-pane "
+							style={{height:"100%"}}
+							paneStyle={{display:'flex', flexDirection: 'column'}}>
+					<Pane className="Vertical-Pane">
 			        {timeseries.length > 0 ? (
-			          <ReactECharts
-			            option={this.getCandlestickChartOptions()}
-			            style={{ height: '100%', width: '100%' }}
-			            onEvents={{ dataZoom: this.handleDataZoom }}
-			          />
+						<ReactECharts	option={this.getCandlestickChartOptions()}
+										style={{ height: '100%', width: '100%' }}
+			            				onEvents={{ dataZoom: this.handleDataZoom }}/>
 			        ) : (
-			          <div style={{ color: '#666' }}>Chart will display here after loading data.</div>
-			        )}
-			      </div>
-
-			      <div className="chart-right">
-				  
-			        <div className="chart-half">
-			          {timeseries.length > 0 ? (
-			            <ReactECharts
-			              option={this.getVolumeChartOptions()}
-			              style={{ height: '100%', width: '100%' }}
-			            />
-			          ) : (
-			            <div style={{ color: '#666' }}>Chart will display here after loading data.</div>
-			          )}
-			        </div>
-
+		          		<div style={{ color: '#666' }}>Chart will display here after loading data.</div>
+		        	)}
+		      		</Pane>
+			   		<Pane className="Vertical-Pane">				  
+		        		<div className="chart-half">
+						{timeseries.length > 0 ? (
+							<ReactECharts	option={this.getVolumeChartOptions()}
+											style={{ height: '100%', width: '100%' }}/>
+			          	) : (
+		            		<div style={{ color: '#666' }}>Chart will display here after loading data.</div>
+		          		)}
+			        	</div>
 			        <div className="chart-half">
 			          {timeseries.length > 0 ? (
 			            <ReactECharts
@@ -339,8 +336,8 @@ class InstrumentGraphContainer extends Component {
 			        </div>
 
 
-			      </div>
-			    </div>
+			      </Pane>
+			    </SplitPane>
 			  </CardBody>
 
 			</Card>

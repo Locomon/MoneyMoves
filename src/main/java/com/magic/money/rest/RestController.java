@@ -2,11 +2,10 @@ package com.magic.money.rest;
 
 import java.util.function.Supplier;
 
-import com.magic.money.core.cache.InstrumentCache;
-import com.magic.money.core.cache.loader.AlphaVantageCsvLoader;
-import com.magic.money.core.cache.loader.FmpCsvLoader;
 import com.magic.money.technical.TechnicalAnalysis;
+import com.magic.money.core.cache.InstrumentCache;
 import com.magic.money.core.cache.controller.InstrumentCacheController;
+import com.magic.money.fundamentals.cache.controller.FundamentalsCacheController;
 
 import akka.http.javadsl.server.AllDirectives;
 import akka.http.javadsl.server.Route;
@@ -17,40 +16,17 @@ public class RestController extends AllDirectives {
     public Route createRoutes() {
         return CorsDirectives.cors(() -> route(
         	//Core Routes
-        	path("loadStocksToCsvFmp", loadStocksToCsvFmp()),
-        	path("loadStocksToCsv", loadStocksToCsv()),
-        	path("initializeCacheFmp", initializeCacheFmp()),
         	path("clearSectorIndustrySymbolMap", clearSectorIndustrySymbolMap()),
         	path("getSectorIndustrySymbolMap", getSectorIndustrySymbolMap()),
         	path("getTimeseries", getTimeseriesDaily()),
         	path("getTimeseriesString", getTimeseriesDailyString()),
+        	//Fundamental Routes
+        	path("getFundamentalsContainer", getFundamentalsContainer()),
         	//Technical Routes
-        	path("getRsi", getRsi()),
         	path("getEnrichedTimeseries", getEnrichedTimeseriesDaily())
         	
         	//Fundamental Routes
         ));
-    }
-    
-    public Supplier<Route> loadStocksToCsv() {
-    	return () -> get(() -> {
-    		AlphaVantageCsvLoader.loadInstrumentDefinitionsToCsv();
-    		return complete("LOADED");
-    	});
-    }
-    
-    public Supplier<Route> loadStocksToCsvFmp() {
-    	return () -> get(() -> {
-    		FmpCsvLoader.loadInstrumentDefinitionsToCsv();
-    		return complete("LOADED");
-    	});
-    }
-    
-    public Supplier<Route> initializeCacheFmp() {
-    	return () -> get(() -> {
-    		InstrumentCacheController.populateInstrumentCache();
-    		return complete("Populated Instrument Cache");
-    	});
     }
     
     public Supplier<Route> getSectorIndustrySymbolMap() {
@@ -90,10 +66,16 @@ public class RestController extends AllDirectives {
     	}));
     }
     
-    /** Technical Routes **/
-    public Supplier<Route> getRsi() {
-    	return () -> get(() -> { return complete("under construction");});
+    /** Fundamental Routes **/
+    
+    public Supplier<Route> getFundamentalsContainer() {
+    	return () -> get(() -> parameter("symbol", symbol -> {
+			System.out.println("getFundamentalsContainer called for symbol:" + symbol);
+			return completeOK(FundamentalsCacheController.getOrLoadFundamentalsContainer(symbol), Jackson.marshaller());
+    	}));
     }
+    
+    /** Technical Routes **/
     
     public Supplier<Route> getEnrichedTimeseriesDaily() {
     	return () -> get(() -> parameter("symbol", symbol -> {

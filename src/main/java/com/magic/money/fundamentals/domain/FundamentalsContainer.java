@@ -1,4 +1,4 @@
-package com.magic.money.fundamentals;
+package com.magic.money.fundamentals.domain;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -14,6 +14,8 @@ public class FundamentalsContainer {
 		this.symbol = builder.symbol;
 		this.instrumentValuation = builder.instrumentValuation;
 		this.instrumentBalanceMap = builder.instrumentBalanceMap;
+		this.instrumentFinancialsMap = builder.instrumentFinancialsMap;
+		this.instrumentGrowthMap = builder.instrumentGrowthMap;
 	}
 	
 	public String getSymbol() { return symbol; }

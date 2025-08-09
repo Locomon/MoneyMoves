@@ -1,4 +1,4 @@
-package com.magic.money.fundamentals;
+package com.magic.money.fundamentals.domain;
 
 public class InstrumentValuation {
 
@@ -469,6 +469,10 @@ public class InstrumentValuation {
 		public Builder dividendPerShareTTM(double dividendPerShareTTM) {
 			this.dividendPerShareTTM = dividendPerShareTTM;
 			return this;
+		}
+		
+		public InstrumentValuation build() {
+			return new InstrumentValuation(this);
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package com.magic.money.fundamentals;
+package com.magic.money.fundamentals.domain;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -11,7 +11,7 @@ public class InstrumentBalance {
 	private LocalDate fillingDate;
 	private LocalDateTime acceptedDate;
 	private int calendarYear;
-	private int period;
+	private String period;
 	private int cashAndCashEquivalents;
 	private int shortTermInvestments;
 	private int cashAndShortTermInvestments;
@@ -123,7 +123,7 @@ public class InstrumentBalance {
 	public LocalDate getFillingDate() { return fillingDate;}
 	public LocalDateTime getAcceptedDate() { return acceptedDate;}
 	public int getCalendarYear() { return calendarYear;}
-	public int getPeriod() { return period;}
+	public String getPeriod() { return period;}
 	public int getCashAndCashEquivalents() { return cashAndCashEquivalents;}
 	public int getShortTermInvestments() { return shortTermInvestments;}
 	public int getCashAndShortTermInvestments() { return cashAndShortTermInvestments;}
@@ -183,7 +183,7 @@ public class InstrumentBalance {
 		private LocalDate fillingDate;
 		private LocalDateTime acceptedDate;
 		private int calendarYear;
-		private int period;
+		private String period;
 		private int cashAndCashEquivalents;
 		private int shortTermInvestments;
 		private int cashAndShortTermInvestments;
@@ -258,7 +258,7 @@ public class InstrumentBalance {
 			this.calendarYear = calendarYear;
 			return this;
 		}
-		public Builder period(int period) {
+		public Builder period(String period) {
 			this.period = period;
 			return this;
 		}

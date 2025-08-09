@@ -4,8 +4,6 @@ import java.util.Map;
 
 import com.magic.money.core.cache.InstrumentCache;
 import com.magic.money.core.cache.MARKET_CAP;
-import com.magic.money.core.cache.loader.AlphaVantageCsvLoader;
-import com.magic.money.core.cache.loader.AlphaVantageCacheLoader;
 import com.magic.money.core.cache.loader.FMP_SECTOR;
 import com.magic.money.core.cache.loader.FmpCacheLoader;
 import com.magic.money.core.cache.loader.FmpCsvLoader;
@@ -34,7 +32,6 @@ public class InstrumentCacheController {
 				}				
 			}
 		}
-		
 	}
 	
 	public static InstrumentTimeseries getTimeseriesDaily(String symbol) {
@@ -42,13 +39,14 @@ public class InstrumentCacheController {
 		InstrumentTimeseries timeseries = instrumentCache.getInstrumentTimeseries(symbol);
 		if (timeseries == null) {
 			
-			timeseries = AlphaVantageCacheLoader.getTimeseriesDaily(symbol);
+			timeseries = FmpCacheLoader.getTimeseriesDaily(symbol);
 			if (timeseries == null) {
 				try {
-					AlphaVantageCsvLoader.getTimeseriesDaily(symbol);
-					timeseries = AlphaVantageCacheLoader.getTimeseriesDaily(symbol);
+					FmpCsvLoader.getTimeseriesDaily(symbol);
+					timeseries = FmpCacheLoader.getTimeseriesDaily(symbol);
 					instrumentCache.putInstrumentTimeseries(timeseries);
 				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 			

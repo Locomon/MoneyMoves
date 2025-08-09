@@ -7,18 +7,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.Properties;
 
 import com.magic.money.core.domain.InstrumentTimeseries;
 import com.magic.money.core.domain.InstrumentTimeseries.InstrumentTimeseriesBuilder;
-
-import java.util.Properties;
 
 public class AlphaVantageCacheLoader {
 	
 	public static InstrumentTimeseries getTimeseriesDaily(String symbol) {
 		try {
 			Properties config = new Properties();
-			InputStream input = AlphaVantageCsvLoader.class.getClassLoader().getResourceAsStream("config.properties");
+			InputStream input = AlphaVantageCacheLoader.class.getClassLoader().getResourceAsStream("config.properties");
 	        
 	        if (input == null) {
                 throw new IOException("config.properties not found in classpath.");

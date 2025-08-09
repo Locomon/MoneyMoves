@@ -1,4 +1,4 @@
-package com.magic.money.fundamentals;
+package com.magic.money.fundamentals.domain;
 import java.time.LocalDate;
 
 public class InstrumentGrowth {
