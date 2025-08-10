@@ -1,9 +1,8 @@
 package com.magic.money.fundamentals.domain;
-import java.time.LocalDate;
 
 public class InstrumentGrowth {
 	private String symbol;
-	private LocalDate date;
+	private String date;
 	private int calendarYear;
 	private String period;
 	private double revenueGrowth;
@@ -83,7 +82,7 @@ public class InstrumentGrowth {
 	}
 	
 	public String getSymbol() { return symbol; }
-	public LocalDate getDate() { return date; }
+	public String getDate() { return date; }
 	public int getCalendarYear() { return calendarYear; }
 	public String getPeriod() { return period; }
 	public double getRevenueGrowth() { return revenueGrowth; }
@@ -127,7 +126,7 @@ public class InstrumentGrowth {
 	
 	public static class Builder {
 		private String symbol;
-		private LocalDate date;
+		private String date;
 		private int calendarYear;
 		private String period;
 		private double revenueGrowth;
@@ -168,7 +167,7 @@ public class InstrumentGrowth {
 		private Builder(String symbol) {
 			this.symbol = symbol;
 		}
-		public Builder date(LocalDate date) {
+		public Builder date(String date) {
 			this.date = date;
 			return this;
 		}

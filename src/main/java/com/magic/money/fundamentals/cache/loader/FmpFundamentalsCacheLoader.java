@@ -21,6 +21,8 @@ import java.time.LocalDateTime;
 import com.google.gson.*;
 import java.nio.charset.StandardCharsets;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class FmpFundamentalsCacheLoader {
 	
 	public static FundamentalsContainer getFundamentalsContainer(String symbol) throws IOException {
@@ -114,11 +116,11 @@ public class FmpFundamentalsCacheLoader {
         for (int i = 0 ; i < incomeStatementArray.size(); i++) {
         	JsonObject incomeStatementObject = incomeStatementArray.get(i).getAsJsonObject();
         	builder.instrumentFinancialsDatapoint(
-        		InstrumentFinancials.builder(symbol).date(LocalDate.parse(incomeStatementObject.get("date").getAsString()))
+        		InstrumentFinancials.builder(symbol).date(incomeStatementObject.get("date").getAsString())
         											.reportedCurrency(incomeStatementObject.get("reportedCurrency").getAsString())
 										        	.cik(incomeStatementObject.get("cik").getAsInt())
-										        	.fillingDate(LocalDate.parse(incomeStatementObject.get("fillingDate").getAsString()))
-										        	.acceptedDate(LocalDateTime.parse(incomeStatementObject.get("acceptedDate").getAsString(), formatter))
+										        	.fillingDate(incomeStatementObject.get("fillingDate").getAsString())
+										        	.acceptedDate(incomeStatementObject.get("acceptedDate").getAsString())
 										        	.calendarYear(incomeStatementObject.get("calendarYear").getAsInt())
 										        	.period(incomeStatementObject.get("period").getAsString())
 										        	.revenue(incomeStatementObject.get("revenue").getAsInt())
@@ -157,11 +159,11 @@ public class FmpFundamentalsCacheLoader {
         for (int i = 0 ; i < balanceSheetArray.size(); i++) {
         	JsonObject balanceSheetObject = balanceSheetArray.get(i).getAsJsonObject();
         	builder.instrumentBalanceDatapoint(
-	        	InstrumentBalance.builder(symbol).date(LocalDate.parse(balanceSheetObject.get("date").getAsString()))
+	        	InstrumentBalance.builder(symbol).date(balanceSheetObject.get("date").getAsString())
 	        									 .reportedCurrency(balanceSheetObject.get("reportedCurrency").getAsString())
 	        									 .cik(balanceSheetObject.get("cik").getAsInt())
-	        									 .fillingDate(LocalDate.parse(balanceSheetObject.get("fillingDate").getAsString()))
-									        	 .acceptedDate(LocalDateTime.parse(balanceSheetObject.get("acceptedDate").getAsString(), formatter))
+	        									 .fillingDate(balanceSheetObject.get("fillingDate").getAsString())
+									        	 .acceptedDate(balanceSheetObject.get("acceptedDate").getAsString())
 									        	 .calendarYear(balanceSheetObject.get("calendarYear").getAsInt())
 									        	 .period(balanceSheetObject.get("period").getAsString())
 									        	 .cashAndCashEquivalents(balanceSheetObject.get("cashAndCashEquivalents").getAsInt())
@@ -217,7 +219,7 @@ public class FmpFundamentalsCacheLoader {
         for (int i = 0 ; i < financialGrowthArray.size(); i++) {
         	JsonObject financialGrowthObject = financialGrowthArray.get(i).getAsJsonObject();
         	builder.instrumentGrowthDatapoint(
-        		InstrumentGrowth.builder(symbol).date(LocalDate.parse(financialGrowthObject.get("date").getAsString()))
+        		InstrumentGrowth.builder(symbol).date(financialGrowthObject.get("date").getAsString())
 								        		.calendarYear(financialGrowthObject.get("calendarYear").getAsInt())
 								        		.period(financialGrowthObject.get("period").getAsString())
 								        		.revenueGrowth(financialGrowthObject.get("revenueGrowth").getAsDouble())
@@ -255,10 +257,7 @@ public class FmpFundamentalsCacheLoader {
 								        		.rdexpenseGrowth(financialGrowthObject.get("rdexpenseGrowth").getAsDouble())
 								        		.sgaexpensesGrowth(financialGrowthObject.get("sgaexpensesGrowth").getAsDouble()).build());
         }
-
-        FundamentalsContainer container = builder.build();
-        
-		return container;
+		return builder.build();
 	}
 	
 	

@@ -1,15 +1,13 @@
 package com.magic.money.fundamentals.domain;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class InstrumentBalance {
 
-	private LocalDate date;
+	private String date;
 	private String symbol;
 	private String reportedCurrency;
 	private int cik;
-	private LocalDate fillingDate;
-	private LocalDateTime acceptedDate;
+	private String fillingDate;
+	private String acceptedDate;
 	private int calendarYear;
 	private String period;
 	private int cashAndCashEquivalents;
@@ -116,12 +114,12 @@ public class InstrumentBalance {
 		this.finalLink = builder.finalLink;		
 	}
 	
-	public LocalDate getDate() { return date;}
+	public String getDate() { return date;}
 	public String getSymbol() { return symbol;}
 	public String getReportedCurrency() { return reportedCurrency;}
 	public int getCik() { return cik;}
-	public LocalDate getFillingDate() { return fillingDate;}
-	public LocalDateTime getAcceptedDate() { return acceptedDate;}
+	public String getFillingDate() { return fillingDate;}
+	public String getAcceptedDate() { return acceptedDate;}
 	public int getCalendarYear() { return calendarYear;}
 	public String getPeriod() { return period;}
 	public int getCashAndCashEquivalents() { return cashAndCashEquivalents;}
@@ -176,12 +174,12 @@ public class InstrumentBalance {
 	}
 	
 	public static class Builder {
-		private LocalDate date;
+		private String date;
 		private String symbol;
 		private String reportedCurrency;
 		private int cik;
-		private LocalDate fillingDate;
-		private LocalDateTime acceptedDate;
+		private String fillingDate;
+		private String acceptedDate;
 		private int calendarYear;
 		private String period;
 		private int cashAndCashEquivalents;
@@ -234,7 +232,7 @@ public class InstrumentBalance {
 		private Builder(String symbol) {
 			this.symbol = symbol;
 		}
-		public Builder date(LocalDate date) {
+		public Builder date(String date) {
 			this.date = date;
 			return this;
 		}
@@ -246,11 +244,11 @@ public class InstrumentBalance {
 			this.cik = cik;
 			return this;
 		}
-		public Builder fillingDate(LocalDate fillingDate) {
+		public Builder fillingDate(String fillingDate) {
 			this.fillingDate = fillingDate;
 			return this;
 		}
-		public Builder acceptedDate(LocalDateTime acceptedDate) {
+		public Builder acceptedDate(String acceptedDate) {
 			this.acceptedDate = acceptedDate;
 			return this;
 		}
