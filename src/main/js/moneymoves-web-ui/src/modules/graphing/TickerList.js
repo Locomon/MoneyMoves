@@ -3,7 +3,8 @@ import SplitPane, { Pane } from 'react-split-pane';
 import { Card, CardHeader, CardBody, CardFooter, Row, Col, Button } from 'reactstrap';
 import axios from 'axios';
 import { FaFolder, FaFolderOpen } from 'react-icons/fa';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGear } from '@fortawesome/free-solid-svg-icons';
 import '../../App.css'; 
 
 class TickerList extends Component {
@@ -130,21 +131,19 @@ class TickerList extends Component {
 				<CardHeader>
 					<Row><div>Instrument Master List</div></Row>
 					<Row>
-						<div>
 							<input
 								type="text"
 								placeholder="Search symbols..."
 								value={searchTerm}
 								onChange={this.handleSearchChange}
-								style={{ width: '100%', marginBottom: '10px', padding: '5px' }}
+								style={{ width: '80%', marginBottom: '10px', padding: '5px' }}
 							/>
-							<input
-								type="button"
-								value={this.state.filterToggled ? "Close Filter" : "Open Filter"}
-								onClick={this.toggleFilter}
-								onChange={()=>{}}
-							/>
-						</div>
+							<Button onClick={this.toggleFilter} style={{ marginLeft: '10px', marginBottom: '10px', width: '15%'}}>
+								<FontAwesomeIcon icon={faGear} />
+							</Button>
+					</Row>
+					<Row>
+						<Button className="custom-button" onClick={this.handleClick}>Load List</Button>
 					</Row>
 				</CardHeader>
 				{this.state.filterToggled ?
@@ -288,11 +287,6 @@ class TickerList extends Component {
 						})}
 					</ul>
 				</CardBody>}
-				<CardFooter>
-					<Row>
-						<Button className="custom-button" onClick={this.handleClick}>Load List</Button>
-					</Row>
-				</CardFooter>
 			</Card>
 		);
 	}

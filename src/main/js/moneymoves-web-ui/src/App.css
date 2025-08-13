@@ -231,3 +231,10 @@ li.tree-item {
   display: flex;
   align-items: center;
 }
+
+.modal {
+  z-index: 99999 !important;
+}
+.modal-backdrop {
+  z-index: 99998 !important;
+}
