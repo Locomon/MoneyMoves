@@ -11,7 +11,7 @@ class BalanceContainer extends Component {
 			symbol: null,
 			instrumentBalanceMap: null,
 			availableColumns: [],
-			selectedColumns: [],
+			columnFlags: [],
 			showSettings: false
 		};
 	}
@@ -25,31 +25,29 @@ class BalanceContainer extends Component {
 				const instrumentBalanceMap = this.props.fundamentals.instrumentBalanceMap;
 				const firstKey = Object.keys(instrumentBalanceMap)[0];
 				if (firstKey != null) {
-					const columns = Object.keys(instrumentBalanceMap[firstKey]);
+					const availableColumns = Object.keys(instrumentBalanceMap[firstKey]);
+					const columnFlags = [];
+					availableColumns.forEach(column => columnFlags.push(true));
 					this.setState({
 						symbol: this.props.selectedInstrument.symbol,
 						instrumentBalanceMap: instrumentBalanceMap,
-						availableColumns: columns,
-						selectedColumns: columns
+						availableColumns: availableColumns,
+						columnFlags: columnFlags
 					});
 				}
 			}
 		}
 	}
 
-	toggleColumn = (col) => {
-		this.setState((prev) => {
-			const isSelected = prev.selectedColumns.includes(col);
-			return {
-				selectedColumns: isSelected ? prev.selectedColumns.filter((c) => c !== col)
-											: [...prev.selectedColumns, col]
-			};
-		});
+	toggleColumn = (index) => {
+		const { columnFlags } = this.state;
+		columnFlags[index] = !columnFlags[index];
+		this.setState({});
 	};
 
 
 	render() {
-		const { symbol, instrumentBalanceMap, selectedColumns, availableColumns, showSettings } = this.state;
+		const { symbol, instrumentBalanceMap, availableColumns, columnFlags, showSettings } = this.state;
 		const tableStyle = { borderCollapse: 'collapse', width: '100%' };
 		const thStyle = { border: '1px solid #ccc', backgroundColor: '#f2f2f2', padding: '8px', textAlign: 'left' };
 		const tdStyle = { border: '1px solid #ccc', padding: '8px' };
@@ -58,74 +56,74 @@ class BalanceContainer extends Component {
 				<Card className="card-full-height">
 					<CardHeader className="d-flex justify-content-center">
 						<h5>The table will display here after loading data.</h5>
-          			</CardHeader>
+					</CardHeader>
 				</Card>
 			);
 		}
 		
 		return (
 			<div>
-			<Modal
-								   isOpen={showSettings}
-								   toggle={() => this.setState({ showSettings: !this.state.showSettings })}
-								 >
-								   <ModalHeader toggle={() => this.setState({ showSettings: false })}>
-								     Column Settings
-								   </ModalHeader>
-								   <ModalBody>
-								     {availableColumns.map((col) => (
-								       <label key={col} style={{ display: 'block' }}>
-								         <input
-								           type="checkbox"
-								           checked={selectedColumns.includes(col)}
-								           onChange={() => this.toggleColumn(col)}
-								         />{' '}
-								         {col}
-								       </label>
-								     ))}
-								   </ModalBody>
-								 </Modal>
-			<Card className="card-full-height">
-				
-				<CardHeader>
-					<Row>
-						<Col className="d-flex justify-content-end">
-	          				<h5 style={{ margin: 0 }}>Balance Sheet for: {symbol}</h5>
-						</Col>
-						<Col className="d-flex justify-content-end">
-	            		{/* Settings Button */}
-		            		<button onClick={() => this.setState({ showSettings: true }) }>
-		              			⚙ Settings
-							</button>
-						</Col>
-					{/* Settings Popup */}
-					
-					</Row>
-        		</CardHeader>
-				{/* Scrollable Table */}
-				<CardBody style={{ margin: 0, padding: 0, height:'100%' }}>
-					<table style={tableStyle}>
-						<thead>
-							<tr>
-								{selectedColumns.map((col) => (
-									<th key={col} style={thStyle}>{col}</th>
-								))}
-							</tr>
-						</thead>
-						<tbody>
-							{Object.entries(instrumentBalanceMap).map(([instrumentKey, instrumentData]) => (
-								<tr key={instrumentKey}>
-									{selectedColumns.map((col) => (
-										<td key={col} style={tdStyle}>
-											{instrumentData[col] !== undefined ? instrumentData[col]: '-'}
-										</td>
+				<Modal	isOpen={showSettings}
+						toggle={() => this.setState({ showSettings: !this.state.showSettings })}
+						className="modal-right">					
+					<ModalHeader toggle={() => this.setState({ showSettings: false })}>
+						Column Settings
+					</ModalHeader>
+					<ModalBody style = {{maxHeight: 'calc(100vh - 200px)', // adjust 200px for header/footer height
+										 overflowY: 'auto'}}>
+						{availableColumns.map((col, index) => (
+							<label key={col} style={{ display: 'block' }}>
+								<input	type="checkbox"
+										checked={columnFlags[index] == true}
+										onChange={() => this.toggleColumn(index)}/>
+								{' '}
+								{col}
+							</label>
+						))}
+					</ModalBody>
+				</Modal>
+				<Card className="card-full-height">
+					<CardHeader>
+						<Row>
+							<Col className="d-flex justify-content-end">
+								<h5 style={{ margin: 0 }}>Balance Sheet for: {symbol}</h5>
+							</Col>
+							<Col className="d-flex justify-content-end">
+							{/* Settings Button */}
+								<button onClick={() => this.setState({ showSettings: true }) }>
+									⚙ Settings
+								</button>
+							</Col>
+						{/* Settings Popup */}
+						
+						</Row>
+					</CardHeader>
+					{/* Scrollable Table */}
+					<CardBody style={{ margin: 0, padding: 0, height: '100%', overflowY: 'auto' }}>
+						<table style={tableStyle}>
+							<thead>
+								<tr>
+									{availableColumns.filter((col, index) => columnFlags[index] == true)
+													 .map((col) => (
+										<th key={col} style={thStyle}>{col}</th>
 									))}
 								</tr>
-							))}
-    					</tbody>
-					</table>
-				</CardBody>
-			</Card>
+							</thead>
+							<tbody>
+								{Object.entries(instrumentBalanceMap).map(([instrumentKey, instrumentData]) => (
+									<tr key={instrumentKey}>
+										{availableColumns.filter((col, index) => columnFlags[index] == true)
+														 .map((col) => (
+											<td key={col} style={tdStyle}>
+												{instrumentData[col] !== undefined ? instrumentData[col]: '-'}
+											</td>
+										))}
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</CardBody>
+				</Card>
 			</div>
 		);
 	}

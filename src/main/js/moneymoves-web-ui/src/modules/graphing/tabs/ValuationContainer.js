@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Card, CardHeader, CardBody } from 'reactstrap';
 
 class ValuationContainer extends Component {
 	
@@ -26,49 +27,43 @@ class ValuationContainer extends Component {
 	}
 	
 	
-  render() {
-	const {selectedInstrument} = this.props;
-	const {instrumentValuation, symbol} = this.state;
-	if (instrumentValuation != null) {
-		const tableStyle = {
-		  borderCollapse: 'collapse',
-		  width: '100%',
-		};
-
-		const thStyle = {
-		  border: '1px solid #ccc',
-		  backgroundColor: '#f2f2f2',
-		  padding: '8px',
-		  textAlign: 'right',
-		  width: '20%',  // smaller width for key column
-		};
-
-		const tdStyle = {
-		  border: '1px solid #ccc',
-		  padding: '8px',
-		};
-		
+	render() {
+		const {selectedInstrument} = this.props;
+		const {instrumentValuation, symbol} = this.state;
+		if (instrumentValuation != null) {
+			const tableStyle = { borderCollapse: 'collapse', width: '100%', };
+			const thStyle = { border: '1px solid #ccc', backgroundColor: '#f2f2f2'
+													  , padding: '8px'
+													  , textAlign: 'right'
+													  , width: '20%' };
+		const tdStyle = { border: '1px solid #ccc', padding: '8px', };
 
 		return (
-		  <div>
-		    <h5>Valuation Metrics for: {symbol}</h5>
-			<table style={tableStyle}>
-			  <tbody>
-			    {Object.entries(instrumentValuation).map(([valuationKey, valuationData]) => (
-			      <tr key={valuationKey}>
-					<td key={valuationKey + "-0"} style={thStyle}><b>{valuationKey}</b></td>
-					<td key={valuationKey + "-1"} style={tdStyle}>{valuationData}</td>
-			      </tr>
-			    ))}
-			  </tbody>
-			</table>
-		  </div>
+			<Card className="card-full-height">
+				<CardHeader>
+					<h5>Valuation Metrics for: {symbol}</h5>				
+				</CardHeader>
+				<CardBody style={{ margin: 0, padding: 0, height: '100%', overflowY: 'auto' }}>
+					<table style={tableStyle}>
+						<tbody>
+							{Object.entries(instrumentValuation).map(([valuationKey, valuationData]) => (
+								<tr key={valuationKey}>
+									<td key={valuationKey + "-0"} style={thStyle}><b>{valuationKey}</b></td>
+									<td key={valuationKey + "-1"} style={tdStyle}>{valuationData}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</CardBody>
+			</Card>
 		);		
 	} else {
 		return (
-		  <div>
-		  	<h5>The table will display here after loading data.</h5>
-		  </div>
+			<Card>
+				<CardHeader>
+					<h5>The table will display here after loading data.</h5>
+				</CardHeader>
+			</Card>
 		);		
 	}
 

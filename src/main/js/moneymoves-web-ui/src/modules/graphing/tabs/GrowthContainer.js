@@ -1,92 +1,132 @@
 import React, { Component } from 'react';
+import { Card, CardHeader, CardBody, CardFooter, Row, Col, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import * as XLSX from 'xlsx';
+import '../../../App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 class GrowthContainer extends Component {
-	
 	constructor(props) {
 		super(props);
 		this.state = {
 			symbol: null,
 			instrumentGrowthMap: null,
 			availableColumns: [],
-			selectedColumns: []
+			columnFlags: [],
+			showSettings: false
 		};
 	}
-	
+
 	componentDidUpdate(prevProps) {
 		if (this.props.fundamentals !== prevProps.fundamentals) {
-			if (this.props.fundamentals != null && this.props.fundamentals.instrumentGrowthMap != null) {
+			if (
+				this.props.fundamentals != null &&
+				this.props.fundamentals.instrumentGrowthMap != null
+			) {
 				const instrumentGrowthMap = this.props.fundamentals.instrumentGrowthMap;
-				const firstKey = (Object.keys(instrumentGrowthMap))[0];
+				const firstKey = Object.keys(instrumentGrowthMap)[0];
 				if (firstKey != null) {
-					const columns = Object.keys(instrumentGrowthMap[firstKey]);
+					const availableColumns = Object.keys(instrumentGrowthMap[firstKey]);
+					const columnFlags = [];
+					availableColumns.forEach(column => columnFlags.push(true));
 					this.setState({
 						symbol: this.props.selectedInstrument.symbol,
 						instrumentGrowthMap: instrumentGrowthMap,
-						availableColumns: columns,
-						selectedColumns: columns
+						availableColumns: availableColumns,
+						columnFlags: columnFlags
 					});
 				}
 			}
 		}
 	}
-	
-	
+
+	toggleColumn = (index) => {
+		const { columnFlags } = this.state;
+		columnFlags[index] = !columnFlags[index];
+		this.setState({});
+	};
+
+
 	render() {
-		const {selectedInstrument} = this.props;
-		const {instrumentGrowthMap, selectedColumns, availableColumns, symbol} = this.state;
-		if (instrumentGrowthMap != null) {
-			const tableStyle = {
-				borderCollapse: 'collapse',
-				width: '100%',
-			};
-
-			const thStyle = {
-				border: '1px solid #ccc',
-				backgroundColor: '#f2f2f2',
-				padding: '8px',
-				textAlign: 'left',
-			};
-
-			const tdStyle = {
-				border: '1px solid #ccc',
-				padding: '8px',
-			};
-
+		const { symbol, instrumentGrowthMap, availableColumns, columnFlags, showSettings } = this.state;
+		const tableStyle = { borderCollapse: 'collapse', width: '100%' };
+		const thStyle = { border: '1px solid #ccc', backgroundColor: '#f2f2f2', padding: '8px', textAlign: 'left' };
+		const tdStyle = { border: '1px solid #ccc', padding: '8px' };
+		if (!instrumentGrowthMap) {
 			return (
-				<div>
-				<h5>Growth Sheet for: {symbol}</h5>
-				<table style={tableStyle}>
-					<thead>
-						<tr>
-							{selectedColumns.map((col) => (
-								<th key={col} style={thStyle}>{col}</th>
-							))}
-						</tr>
-					</thead>
-					<tbody>
-						{Object.entries(instrumentGrowthMap).map(([instrumentKey, instrumentData]) => (
-							<tr key={instrumentKey}>
-								{selectedColumns.map((col) => (
-									<td key={col} style={tdStyle}>
-										{/* Render data if exists, else fallback */}
-										{instrumentData[col] !== undefined ? instrumentData[col] : '-'}
-									</td>
-								))}
-							</tr>
-						))}
-					</tbody>
-				</table>
-				</div>
-			);		
-		} else {
-			return (
-				<div>
-					<h5>The table will display here after loading data.</h5>
-				</div>
-			);		
+				<Card className="card-full-height">
+					<CardHeader className="d-flex justify-content-center">
+						<h5>The table will display here after loading data.</h5>
+					</CardHeader>
+				</Card>
+			);
 		}
+		
+		return (
+			<div>
+				<Modal	isOpen={showSettings}
+						toggle={() => this.setState({ showSettings: !this.state.showSettings })}
+						className="modal-right">					
+					<ModalHeader toggle={() => this.setState({ showSettings: false })}>
+						Column Settings
+					</ModalHeader>
+					<ModalBody style = {{maxHeight: 'calc(100vh - 200px)', // adjust 200px for header/footer height
+										 overflowY: 'auto'}}>
+						{availableColumns.map((col, index) => (
+							<label key={col} style={{ display: 'block' }}>
+								<input	type="checkbox"
+										checked={columnFlags[index] == true}
+										onChange={() => this.toggleColumn(index)}/>
+								{' '}
+								{col}
+							</label>
+						))}
+					</ModalBody>
+				</Modal>
+				<Card className="card-full-height">
+					<CardHeader>
+						<Row>
+							<Col className="d-flex justify-content-end">
+								<h5 style={{ margin: 0 }}>Growth Sheet for: {symbol}</h5>
+							</Col>
+							<Col className="d-flex justify-content-end">
+							{/* Settings Button */}
+								<button onClick={() => this.setState({ showSettings: true }) }>
+									⚙ Settings
+								</button>
+							</Col>
+						{/* Settings Popup */}
+						
+						</Row>
+					</CardHeader>
+					{/* Scrollable Table */}
+					<CardBody style={{ margin: 0, padding: 0, height: '100%', overflowY: 'auto' }}>
+						<table style={tableStyle}>
+							<thead>
+								<tr>
+									{availableColumns.filter((col, index) => columnFlags[index] == true)
+													 .map((col) => (
+										<th key={col} style={thStyle}>{col}</th>
+									))}
+								</tr>
+							</thead>
+							<tbody>
+								{Object.entries(instrumentGrowthMap).map(([instrumentKey, instrumentData]) => (
+									<tr key={instrumentKey}>
+										{availableColumns.filter((col, index) => columnFlags[index] == true)
+														 .map((col) => (
+											<td key={col} style={tdStyle}>
+												{instrumentData[col] !== undefined ? instrumentData[col]: '-'}
+											</td>
+										))}
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</CardBody>
+				</Card>
+			</div>
+		);
 	}
 }
 
-// Wrap with React.memo for shallow props comparison to avoid re-render on unrelated changes
 export default React.memo(GrowthContainer);

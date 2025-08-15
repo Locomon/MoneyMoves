@@ -238,3 +238,46 @@ li.tree-item {
 .modal-backdrop {
   z-index: 99998 !important;
 }
+
+/* Force right-side docking */
+.modal-dialog {
+  margin: 0; /* kill default horizontal margins */
+}
+
+.modal-right {
+  position: fixed !important;
+  top: 0;
+  right: 0;
+  margin: 0;
+  height: 100%;
+  width: clamp(300px, 40vw, 500px);
+  max-width: 100%;
+  transform: none !important;
+}
+
+.modal-right .modal-content {
+  border-radius: 0;
+}
+
+.modal-right {
+  position: fixed !important;
+  top: 20px;   /* space from top */
+  bottom: 20px;/* space from bottom */
+  height: auto; /* shrink to fit */
+  max-height: calc(100vh - 40px); /* viewport minus top/bottom margin */
+}
+
+/* Scroll inside body */
+.modal-right .modal-body {
+  overflow-y: auto;
+  max-height: calc(100vh - 100px);
+}
+
+/* Slide in from right */
+.modal.fade .modal-right {
+  transform: translateX(100%) !important;
+  transition: transform .3s ease-in-out;
+}
+.modal.show .modal-right {
+  transform: translateX(0) !important;
+}
