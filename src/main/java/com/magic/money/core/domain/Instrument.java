@@ -5,19 +5,19 @@ public class Instrument {
 
 	private String symbol;
 	private String companyName;
-	private String marketCap;
+	private long marketCap;
 	private String sector;
 	private String industry;
-	private String beta;
-	private String price;
-	private String lastAnnualDividend;
-	private String volume;
+	private double beta;
+	private double price;
+	private double lastAnnualDividend;
+	private long volume;
 	private String exchange;
 	private String exchangeShortName;
 	private String country;
-	private String isEtf;
-	private String isFund;
-	private String isActivelyTrading;
+	private boolean isEtf;
+	private boolean isFund;
+	private boolean isActivelyTrading;
 	
 	public Instrument(Builder builder) {
 		this.symbol = builder.symbol;
@@ -38,48 +38,20 @@ public class Instrument {
 	}
 	
 	public String getSymbol() { return symbol; }
-
 	public String getCompanyName() { return companyName; }
-
-	public String getMarketCap() { return marketCap; }
-
+	public long getMarketCap() { return marketCap; }
 	public String getSector() { return sector; }
-
 	public String getIndustry() { return industry; }
-
-	public String getBeta() { return beta; }
-
-	public String getPrice() { return price; }
-
-	public String getLastAnnualDividend() { return lastAnnualDividend; }
-
-	public String getVolume() {
-		return volume;
-	}
-
-	public String getExchange() {
-		return exchange;
-	}
-
-	public String getExchangeShortName() {
-		return exchangeShortName;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public String getIsEtf() {
-		return isEtf;
-	}
-
-	public String getIsFund() {
-		return isFund;
-	}
-
-	public String getIsActivelyTrading() {
-		return isActivelyTrading;
-	}
+	public double getBeta() { return beta; }
+	public double getPrice() { return price; }
+	public double getLastAnnualDividend() { return lastAnnualDividend; }
+	public long getVolume() { return volume; }
+	public String getExchange() { return exchange; }
+	public String getExchangeShortName() { return exchangeShortName; }
+	public String getCountry() { return country; }
+	public boolean getIsEtf() { return isEtf; }
+	public boolean getIsFund() { return isFund; }
+	public boolean getIsActivelyTrading() { return isActivelyTrading; }
 	
 	public static Builder builder(String symbol) {
 		return new Builder(symbol);
@@ -88,19 +60,19 @@ public class Instrument {
 	public static class Builder {
 		private String symbol;
 		private String companyName;
-		private String marketCap;
+		private long marketCap;
 		private String sector;
 		private String industry;
-		private String beta;
-		private String price;
-		private String lastAnnualDividend;
-		private String volume;
+		private double beta;
+		private double price;
+		private double lastAnnualDividend;
+		private long volume;
 		private String exchange;
 		private String exchangeShortName;
 		private String country;
-		private String isEtf;
-		private String isFund;
-		private String isActivelyTrading;
+		private boolean isEtf;
+		private boolean isFund;
+		private boolean isActivelyTrading;
 		private Builder(String symbol) {
 			this.symbol = symbol;
 		}
@@ -108,7 +80,7 @@ public class Instrument {
 			this.companyName = companyName;
 			return this;
 		}
-		public Builder marketCap(String marketCap) {
+		public Builder marketCap(long marketCap) {
 			this.marketCap = marketCap;
 			return this;
 		}
@@ -120,19 +92,19 @@ public class Instrument {
 			this.industry = industry;
 			return this;
 		}
-		public Builder beta(String beta) {
+		public Builder beta(double beta) {
 			this.beta = beta;
 			return this;
 		}
-		public Builder price(String price) {
+		public Builder price(double price) {
 			this.price = price;
 			return this;
 		}
-		public Builder lastAnnualDividend(String lastAnnualDividend) {
+		public Builder lastAnnualDividend(double lastAnnualDividend) {
 			this.lastAnnualDividend = lastAnnualDividend;
 			return this;
 		}
-		public Builder volume(String volume) {
+		public Builder volume(long volume) {
 			this.volume = volume;
 			return this;
 		}
@@ -148,15 +120,15 @@ public class Instrument {
 			this.country = country;
 			return this;
 		}
-		public Builder isEtf(String isEtf) {
+		public Builder isEtf(boolean isEtf) {
 			this.isEtf = isEtf;
 			return this;
 		}
-		public Builder isFund(String isFund) {
+		public Builder isFund(boolean isFund) {
 			this.isFund = isFund;
 			return this;
 		}
-		public Builder isActivelyTrading(String isActivelyTrading) {
+		public Builder isActivelyTrading(boolean isActivelyTrading) {
 			this.isActivelyTrading = isActivelyTrading;
 			return this;
 		}

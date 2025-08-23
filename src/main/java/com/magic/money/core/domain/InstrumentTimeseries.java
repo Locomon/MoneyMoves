@@ -43,8 +43,8 @@ public class InstrumentTimeseries {
 			this.symbol = symbol;
 		}
 		
-		public InstrumentTimeseriesBuilder instrumentTimeseriesDatapoint(LocalDate cobDate, double open, double high, double low, double close, int volume) {
-			this.instrumentTimeseriesDatapointMap.put(cobDate, new InstrumentTimeseriesDatapoint(open, high, low, close, volume));
+		public InstrumentTimeseriesBuilder instrumentTimeseriesDatapoint(LocalDate cobDate, double open, double high, double low, double close, int volume, double vwap) {
+			this.instrumentTimeseriesDatapointMap.put(cobDate, new InstrumentTimeseriesDatapoint(open, high, low, close, volume, vwap));
 			return this;
 		}
 		

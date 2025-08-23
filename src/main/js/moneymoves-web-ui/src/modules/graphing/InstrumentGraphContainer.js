@@ -50,7 +50,8 @@ class InstrumentGraphContainer extends Component {
 					resistance2: data.resistance2,
 					sma14: data.sma14,
 					sma60: data.sma60,
-					macd: data.macd
+					macd: data.macd,
+					vwap: data.vwap
 				})).sort((a, b) => new Date(a.date) - new Date(b.date)); // Ensure correct order
 			this.setState({ loadedSymbol: loadedSymbol, timeseries: timeseriesArray
 													  , loading: false });
@@ -123,14 +124,13 @@ class InstrumentGraphContainer extends Component {
 						borderColor0: '#8A0000'
 					}
 				},
-				/*
 				{
-					name: 'SMA14',
+					name: 'VWAP',
 					type: 'line',
-					data: timeseries.map(entry => entry.sma14 ?? null),
-					lineStyle: { color: '#ffa500' },
+					data: timeseries.map(entry => entry.vwap ?? null),
+					lineStyle: { color: '#000000' },
 					showSymbol: false
-				},*/
+				},
 				{
 					name: 'Support',
 					type: 'line',
@@ -250,14 +250,15 @@ class InstrumentGraphContainer extends Component {
 			<Card className="card-full-height">
 				<CardHeader>
 					<Row className="mt-2">
-						<Col className="d-flex justify-content-end"><h4>Timeseries Data</h4></Col>
-						<Col className="d-flex justify-content-end">
+						<Col className="d-flex justify-content-start">
 							<Button	color="primary"
 									onClick={this.handleLoadTimeseries}
 									disabled={!selectedInstrument || loading}>
 								{loading ? 'Loading...' : 'Load Timeseries'}
 							</Button>
 						</Col>
+						<Col className="d-flex justify-content-center"><h4>Timeseries Data</h4></Col>
+						<Col/>
 					</Row>
 				</CardHeader>
 				<CardBody className="card-body-flexible">

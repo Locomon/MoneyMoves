@@ -15,6 +15,10 @@ import java.util.Properties;
 
 import org.springframework.web.client.RestTemplate;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.magic.money.core.ApiKeyManager;
 import com.magic.money.core.cache.MARKET_CAP;
 public class FmpCsvLoader {
@@ -52,7 +56,7 @@ public class FmpCsvLoader {
 			String apiKey = ApiKeyManager.getKey("fmp");
 	        StringBuilder urlStrBuilder = 
 	        	new StringBuilder("https://financialmodelingprep.com/api/v3/stock-screener?apikey=").append(apiKey)
-	        		.append("&datatype=csv&country=US&sector=").append(sectorStr);
+	        		.append("&datatype=json&country=US&sector=").append(sectorStr);
 	        if (marketCap == MARKET_CAP.SMALL) {
 	        	urlStrBuilder.append("&marketCapLowerThan=2000000000");
 	        } else if (marketCap == MARKET_CAP.MEDIUM) {
@@ -62,22 +66,76 @@ public class FmpCsvLoader {
 	        }
 			String urlStr = urlStrBuilder.toString();
 	        
-			URL url = new URL(urlStr);
-	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	        conn.setRequestMethod("GET");
-	        // Read response
-	        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String response = fetchFromUrl(urlStr);
+            JsonArray responseJsonArray = JsonParser.parseString(response).getAsJsonArray();
 	        BufferedWriter writer = Files.newBufferedWriter(OUTPUT_CSV);
-	        String line = reader.readLine();
-            while ((line = reader.readLine()) != null) {
-                writer.write(line);
-                writer.newLine();
+            for (int i = 0 ; i < responseJsonArray.size(); i++) {
+            	JsonObject companyObject = responseJsonArray.get(i).getAsJsonObject();
+            	String [] companyLine = 
+            		{
+            		getStringOrEmpty(companyObject, "symbol"),
+            		enquote(getStringOrEmpty(companyObject, "companyName")),
+            		getStringOrEmpty(companyObject, "marketCap"),
+            		getStringOrEmpty(companyObject, "sector"),
+				    enquote(getStringOrEmpty(companyObject, "industry")),
+				    getStringOrEmpty(companyObject, "beta"),
+				    getStringOrEmpty(companyObject, "price"),
+					getStringOrEmpty(companyObject, "lastAnnualDividend"),
+					getStringOrEmpty(companyObject, "volume"),
+					getStringOrEmpty(companyObject, "exchange"),
+					getStringOrEmpty(companyObject, "exchangeShortName"),
+					getStringOrEmpty(companyObject, "country"),
+					getStringOrEmpty(companyObject, "isEtf"),
+					getStringOrEmpty(companyObject, "isFund"),
+					getStringOrEmpty(companyObject, "isActivelyTrading"),
+					};
+            	writer.write(String.join(",", companyLine));
+            	writer.newLine();
             }
 	        writer.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	private static String getStringOrEmpty(JsonObject obj, String field) {
+	    if (obj.has(field) && !obj.get(field).isJsonNull()) {
+	        return obj.get(field).getAsString();
+	    }
+	    return "";
+	}
+	
+    private static String enquote(Object obj) {
+        if (obj == null) return "\"\"";
+        String value = obj.toString().replace("\"", "\"\"");
+        return "\"" + value + "\"";
+    }
+	
+    private static String fetchFromUrl(String urlString) throws IOException {
+        URL url = new URL(urlString);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Accept", "application/json");
+
+        if (conn.getResponseCode() != 200) {
+            throw new IOException("Failed to fetch data. HTTP code: " + conn.getResponseCode());
+        }
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        StringBuilder responseBuilder = new StringBuilder();
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            responseBuilder.append(line);
+        }
+
+        reader.close();
+        conn.disconnect();
+
+        return responseBuilder.toString();
+    }
+
 
 	public static String getQuarterlyEarnings(String symbol) {
 		String apiKey = ApiKeyManager.getKey("fmp");

@@ -19,7 +19,8 @@ class TickerList extends Component {
 			marketCapMin:'', marketCapMax:'',
 			country: '',
 			industry: '',
-			exchange: ''
+			exchange: '',
+			selectedInstrumentSymbol: null
 		};
 
 		this.handleClick = this.handleClick.bind(this);
@@ -105,6 +106,7 @@ class TickerList extends Component {
 	};
 	
 	handleInstrumentSelect (instrument) {
+		this.setState({ selectedInstrumentSymbol: instrument.symbol }); // <-- Track selected
 		this.props.handleInstrumentSelect(instrument);
 	}
 	
@@ -123,7 +125,7 @@ class TickerList extends Component {
 
 
 	render() {
-		const { sectorIndustryMap, searchTerm, priceMin, priceMax, betaMin, betaMax
+		const { sectorIndustryMap, searchTerm, priceMin, priceMax, betaMin, betaMax, selectedInstrumentSymbol
 								 , marketCapMin, marketCapMax, country, industry, exchange, isEtf, isFund} = this.state;
 		const instrumentPredicate = this.generateInstrumentPredicate();
 		return (
@@ -266,15 +268,22 @@ class TickerList extends Component {
 														</span>
 														{isIndustryExpanded && (
 															<ul style={{ listStyleType: 'none', paddingLeft: '40px' }}>
-																{filteredInstruments.map(instrument => (
-																	<li
-																		key={`${sectorType}-${industryKey}-${instrument.symbol}`}
-																		onClick={() => this.handleInstrumentSelect(instrument)}
-																		style={{ cursor: 'pointer' }}
-																	>
-																		{instrument.symbol}
-																	</li>
-																))}
+																{filteredInstruments.map(instrument => {
+																	const isSelected = selectedInstrumentSymbol === instrument.symbol;
+																		return (
+																		<li
+																			key={`${sectorType}-${industryKey}-${instrument.symbol}`}
+																			onClick={() => this.handleInstrumentSelect(instrument)}
+																			style={{ cursor: 'pointer',
+																				backgroundColor: isSelected ? 'darkblue' : 'transparent',
+																				color: isSelected ? 'white' : 'black'
+																			 }}
+																		>
+																	
+																			{instrument.symbol}
+																		</li>
+																		)
+																})}
 															</ul>
 														)}
 													</li>

@@ -24,6 +24,17 @@ public class FundamentalsContainer {
 	public Map<Integer, InstrumentFinancials> getInstrumentFinancialsMap() { return instrumentFinancialsMap; }
 	public Map<Integer, InstrumentGrowth> getInstrumentGrowthMap() { return instrumentGrowthMap; }
 	
+	public InstrumentBalance getLatestBalance() {
+		return null;
+	}
+	public InstrumentFinancials getLatestFinancials() {
+		return null;
+	}
+	public InstrumentGrowth getLatestGrowth() {
+		return null;
+	}
+
+	
 	public static Builder builder(String symbol) {
 		return new Builder(symbol);
 	}

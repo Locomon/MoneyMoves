@@ -1,5 +1,10 @@
 package com.magic.money.core.cache.loader;
 
+import java.util.Arrays;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.primitives.Doubles;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +14,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import com.magic.money.core.cache.InstrumentCache;
 import com.magic.money.core.cache.MARKET_CAP;
@@ -17,11 +23,14 @@ import com.magic.money.core.domain.InstrumentTimeseries;
 import com.magic.money.core.domain.InstrumentTimeseries.InstrumentTimeseriesBuilder;
 import com.opencsv.CSVReader;
 
+
+
 public class FmpCacheLoader {
 
 	
 	public static boolean populateInstrumentCacheFromCsvForSector(FMP_SECTOR sector, MARKET_CAP marketCap) {
 		InstrumentCache cache = InstrumentCache.getInstance();
+		String line = "";
 		try {
 			Properties config = new Properties();
 			InputStream input = FmpCacheLoader.class.getClassLoader().getResourceAsStream("config.properties");
@@ -50,27 +59,28 @@ public class FmpCacheLoader {
             
             for (int i = 1 ; i < records.size(); i++) {
 			String [] linesplit = records.get(i);
-				
+				line = Arrays.stream(linesplit).collect(Collectors.joining("|"));
 				Instrument instrument =
 					Instrument.builder(linesplit[0])
 							  .companyName(linesplit[1])
-							  .marketCap(linesplit[2])
+							  .marketCap(Long.valueOf(linesplit[2]))
 							  .sector(linesplit[3])
 							  .industry(linesplit[4])
-							  .beta(linesplit[5])
-							  .price(linesplit[6])
-							  .lastAnnualDividend(linesplit[7])
-							  .volume(linesplit[8])
+							  .beta(MoreObjects.firstNonNull(Doubles.tryParse(linesplit[5]), 0D))
+							  .price(MoreObjects.firstNonNull(Doubles.tryParse(linesplit[6]), 0D))
+							  .lastAnnualDividend(MoreObjects.firstNonNull(Doubles.tryParse(linesplit[7]), 0D))
+							  .volume(Long.valueOf(linesplit[8]))
 							  .exchange(linesplit[9])
 							  .exchangeShortName(linesplit[10])
 							  .country(linesplit[11])
-							  .isEtf(linesplit[12])
-							  .isFund(linesplit[13])
-							  .isActivelyTrading(linesplit[14]).build();
+							  .isEtf(Boolean.valueOf(linesplit[12]))
+							  .isFund(Boolean.valueOf(linesplit[13]))
+							  .isActivelyTrading(Boolean.valueOf(linesplit[14])).build();
 				cache.putInstrument(instrument);
 			}
 			reader.close();
 		} catch (Exception e) {
+			System.out.println("Error trying to parse line:" + line);
 			e.printStackTrace();
 		}
 		return true;
@@ -111,7 +121,8 @@ public class FmpCacheLoader {
 				double low = Double.valueOf(row[3]);
 				double close = Double.valueOf(row[4]);
 				int volume = Integer.valueOf(row[6]);
-				builder.instrumentTimeseriesDatapoint(cobDate, open, high, low, close, volume);
+				double vwap = Double.valueOf(row[10]);
+				builder.instrumentTimeseriesDatapoint(cobDate, open, high, low, close, volume, vwap);
 			}
 			reader.close();
 			return builder.build();			

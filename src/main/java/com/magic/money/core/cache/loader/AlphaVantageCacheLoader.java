@@ -49,7 +49,7 @@ public class AlphaVantageCacheLoader {
 				double low = Double.valueOf(row[3]);
 				double close = Double.valueOf(row[4]);
 				int volume = Integer.valueOf(row[5]);
-				builder.instrumentTimeseriesDatapoint(cobDate, open, high, low, close, volume);
+				builder.instrumentTimeseriesDatapoint(cobDate, open, high, low, close, volume, Double.NaN);
 			}
 			reader.close();
 			return builder.build();			

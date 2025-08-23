@@ -98,38 +98,7 @@ class InstrumentFundamentalsTabContainer extends Component {
 			<Card className="card-full-height">
 				<CardHeader>
 					<Row>
-						<Col>
-						<Nav tabs>
-							<NavItem>
-								<NavLink	className={classnames({ active: activeTab === 'valuation' })}
-											onClick={() => this.toggleTab('valuation')}>
-									Valuation
-								</NavLink>
-							</NavItem>
-							<NavItem>
-								<NavLink	className={classnames({ active: activeTab === 'financials' })}
-											onClick={() => this.toggleTab('financials')}>
-									Financials
-								</NavLink>
-							</NavItem>
-							<NavItem>
-								<NavLink	className={classnames({ active: activeTab === 'balance' })}
-											onClick={() => this.toggleTab('balance')}>
-									Balance Sheet
-								</NavLink>
-							</NavItem>
-							<NavItem>
-								<NavLink	className={classnames({ active: activeTab === 'growth' })}
-											onClick={() => this.toggleTab('growth')}>
-									Growth
-								</NavLink>
-							</NavItem>
-						</Nav>
-	
-						</Col>
-
-						<Col className="d-flex justify-content-center"><h4>Fundamentals Data </h4></Col>
-						<Col className="d-flex justify-content-end">
+						<Col className="d-flex justify-content-start">
 							{ selectedInstrument && 
 								<Button
 								  color="primary"
@@ -147,6 +116,35 @@ class InstrumentFundamentalsTabContainer extends Component {
 							  📤 Export
 							</button>
 							}
+						</Col>		
+						<Col className="d-flex justify-content-center"><h4>Fundamentals Data </h4></Col>
+						<Col>
+							<Nav tabs>
+								<NavItem>
+									<NavLink	className={classnames({ active: activeTab === 'valuation' })}
+												onClick={() => this.toggleTab('valuation')}>
+										Valuation
+									</NavLink>
+								</NavItem>
+								<NavItem>
+									<NavLink	className={classnames({ active: activeTab === 'financials' })}
+												onClick={() => this.toggleTab('financials')}>
+										Financials
+									</NavLink>
+								</NavItem>
+								<NavItem>
+									<NavLink	className={classnames({ active: activeTab === 'balance' })}
+												onClick={() => this.toggleTab('balance')}>
+										Balance Sheet
+									</NavLink>
+								</NavItem>
+								<NavItem>
+									<NavLink	className={classnames({ active: activeTab === 'growth' })}
+												onClick={() => this.toggleTab('growth')}>
+										Growth
+									</NavLink>
+								</NavItem>
+							</Nav>
 						</Col>
 					</Row>
 				</CardHeader>

@@ -6,34 +6,23 @@ public class InstrumentTimeseriesDatapoint {
 	private final double low;
 	private final double close;
 	private final int volume;
+	private final double vwap;
 	
-	public InstrumentTimeseriesDatapoint(double open, double high, double low, double close, int volume) {
+	public InstrumentTimeseriesDatapoint(double open, double high, double low, double close, int volume, double vwap) {
 		this.open = open;
 		this.high = high;
 		this.low = low;
 		this.close = close;
 		this.volume = volume;
+		this.vwap = vwap;
 	}
 	
-	public double getOpen() {
-		return open;
-	}
-	
-	public double getHigh() {
-		return high;
-	}
-	
-	public double getLow() {
-		return low;
-	}
-	
-	public double getClose() {
-		return close;
-	}
-	
-	public int getVolume() {
-		return volume;
-	}
+	public double getOpen() { return open; }
+	public double getHigh() { return high; }
+	public double getLow() { return low; }
+	public double getClose() { return close; }
+	public int getVolume() { return volume; }
+	public double getVwap() { return vwap; }
 	
 	@Override
 	public String toString() {

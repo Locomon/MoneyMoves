@@ -38,8 +38,9 @@ public class EnrichedTimeseriesDatapoint {
 	public double getHigh() { return unenrichedDatapoint.getHigh(); }
 	public double getLow() { return unenrichedDatapoint.getLow(); }
 	public int getVolume() { return unenrichedDatapoint.getVolume(); }
-	public double getRsi() { return rsi; }
+	public double getVwap() { return unenrichedDatapoint.getVwap(); }
 	
+	public double getRsi() { return rsi; }
 	public double getSupport1() { return support1; }
 	public double getSupport2() { return support2; }
 	public double getResistance1() { return resistance1; }
