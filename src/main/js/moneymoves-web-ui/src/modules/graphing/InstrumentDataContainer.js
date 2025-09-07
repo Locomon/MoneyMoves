@@ -27,7 +27,7 @@ class InstrumentDataContainer extends Component {
 		const { loading, selectedInstrument} = this.state;
 		return (
 			<SplitPane	split="vertical"
-						defaultSize="25%"
+						defaultSize="15%"
 						className="custom-split-pane "
 						style={{height:"100%"}}
 						paneStyle={{display:'flex', flexDirection: 'column'}}>
@@ -41,7 +41,7 @@ class InstrumentDataContainer extends Component {
 							<Row className="mt-2">
 									<h2 className="d-flex justify-content-center">
 										{selectedInstrument
-											? `${selectedInstrument.symbol}: ${selectedInstrument.companyName}`
+											? `${selectedInstrument.symbol}: ${selectedInstrument.companyName} (Beta: ${selectedInstrument.beta})`
 											: 'Please select an Instrument'}
 									</h2>
 

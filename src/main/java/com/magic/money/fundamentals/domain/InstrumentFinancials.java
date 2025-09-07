@@ -4,14 +4,13 @@ public class InstrumentFinancials {
 	private String symbol;
 	private String reportedCurrency;
 	private int cik;
-	private String fillingDate;
+	private String filingDate;
 	private String acceptedDate;
-	private int calendarYear;
+	private int fiscalYear;
 	private String period;
 	private int revenue;
 	private int costOfRevenue;
 	private int grossProfit;
-	private double grossProfitRatio;
 	private int researchAndDevelopmentExpenses;
 	private int generalAndAdministrativeExpenses;
 	private int sellingAndMarketingExpenses;
@@ -19,39 +18,40 @@ public class InstrumentFinancials {
 	private int otherExpenses;
 	private int operatingExpenses;
 	private int costAndExpenses;
+	private int netInterestIncome;
 	private int interestIncome;
 	private int interestExpense;
 	private int depreciationAndAmortization;
 	private int ebitda;
-	private double ebitdaratio;
+	private int ebit;
+	private int nonOperatingIncomeExcludingInterest;
 	private int operatingIncome;
-	private double operatingIncomeRatio;
 	private int totalOtherIncomeExpensesNet;
 	private int incomeBeforeTax;
-	private double incomeBeforeTaxRatio;
 	private int incomeTaxExpense;
+	private int netIncomeFromContinuingOperations;
+	private int netIncomeFromDiscontinuedOperations;
+	private int otherAdjustmentsToNetIncome;
 	private int netIncome;
-	private double netIncomeRatio;
+	private int netIncomeDeductions;
+	private int bottomLineNetIncome;
 	private double eps;
-	private int epsdiluted;
+	private double epsDiluted;
 	private int weightedAverageShsOut;
 	private int weightedAverageShsOutDil;
-	private String link;
-	private String finalLink;
 	
 	public InstrumentFinancials(Builder builder) {
-		this.date = builder.date;
+		date = builder.date;
 		this.symbol = builder.symbol;
 		this.reportedCurrency = builder.reportedCurrency;
 		this.cik = builder.cik;
-		this.fillingDate = builder.fillingDate;
+		this.filingDate = builder.filingDate;
 		this.acceptedDate = builder.acceptedDate;
-		this.calendarYear = builder.calendarYear;
+		this.fiscalYear = builder.fiscalYear;
 		this.period = builder.period;
 		this.revenue = builder.revenue;
 		this.costOfRevenue = builder.costOfRevenue;
 		this.grossProfit = builder.grossProfit;
-		this.grossProfitRatio = builder.grossProfitRatio;
 		this.researchAndDevelopmentExpenses = builder.researchAndDevelopmentExpenses;
 		this.generalAndAdministrativeExpenses = builder.generalAndAdministrativeExpenses;
 		this.sellingAndMarketingExpenses = builder.sellingAndMarketingExpenses;
@@ -59,39 +59,40 @@ public class InstrumentFinancials {
 		this.otherExpenses = builder.otherExpenses;
 		this.operatingExpenses = builder.operatingExpenses;
 		this.costAndExpenses = builder.costAndExpenses;
+		this.netInterestIncome = builder.netInterestIncome;
 		this.interestIncome = builder.interestIncome;
 		this.interestExpense = builder.interestExpense;
 		this.depreciationAndAmortization = builder.depreciationAndAmortization;
 		this.ebitda = builder.ebitda;
-		this.ebitdaratio = builder.ebitdaratio;
+		this.ebit = builder.ebit;
+		this.nonOperatingIncomeExcludingInterest = builder.nonOperatingIncomeExcludingInterest;
 		this.operatingIncome = builder.operatingIncome;
-		this.operatingIncomeRatio = builder.operatingIncomeRatio;
 		this.totalOtherIncomeExpensesNet = builder.totalOtherIncomeExpensesNet;
 		this.incomeBeforeTax = builder.incomeBeforeTax;
-		this.incomeBeforeTaxRatio = builder.incomeBeforeTaxRatio;
 		this.incomeTaxExpense = builder.incomeTaxExpense;
+		this.netIncomeFromContinuingOperations = builder.netIncomeFromContinuingOperations;
+		this.netIncomeFromDiscontinuedOperations = builder.netIncomeFromDiscontinuedOperations;
+		this.otherAdjustmentsToNetIncome = builder.otherAdjustmentsToNetIncome;
 		this.netIncome = builder.netIncome;
-		this.netIncomeRatio = builder.netIncomeRatio;
+		this.netIncomeDeductions = builder.netIncomeDeductions;
+		this.bottomLineNetIncome = builder.bottomLineNetIncome;
 		this.eps = builder.eps;
-		this.epsdiluted = builder.epsdiluted;
+		this.epsDiluted = builder.epsDiluted;
 		this.weightedAverageShsOut = builder.weightedAverageShsOut;
 		this.weightedAverageShsOutDil = builder.weightedAverageShsOutDil;
-		this.link = builder.link;
-		this.finalLink = builder.finalLink;
 	}
 	
 	public String getDate() { return date; }
 	public String getSymbol() { return symbol; }
 	public String getReportedCurrency() { return reportedCurrency; }
 	public int getCik() { return cik; }
-	public String getFillingDate() { return fillingDate; }
+	public String getFilingDate() { return filingDate; }
 	public String getAcceptedDate() { return acceptedDate; }
-	public int getCalendarYear() { return calendarYear; }
+	public int getFiscalYear() { return fiscalYear; }
 	public String getPeriod() { return period; }
 	public int getRevenue() { return revenue; }
 	public int getCostOfRevenue() { return costOfRevenue; }
 	public int getGrossProfit() { return grossProfit; }
-	public double getGrossProfitRatio() { return grossProfitRatio; }
 	public int getResearchAndDevelopmentExpenses() { return researchAndDevelopmentExpenses; }
 	public int getGeneralAndAdministrativeExpenses() { return generalAndAdministrativeExpenses; }
 	public int getSellingAndMarketingExpenses() { return sellingAndMarketingExpenses; }
@@ -99,43 +100,44 @@ public class InstrumentFinancials {
 	public int getOtherExpenses() { return otherExpenses; }
 	public int getOperatingExpenses() { return operatingExpenses; }
 	public int getCostAndExpenses() { return costAndExpenses; }
+	public int getNetInterestIncome() { return netInterestIncome; }
 	public int getInterestIncome() { return interestIncome; }
 	public int getInterestExpense() { return interestExpense; }
 	public int getDepreciationAndAmortization() { return depreciationAndAmortization; }
 	public int getEbitda() { return ebitda; }
-	public double getEbitdaratio() { return ebitdaratio; }
+	public int getEbit() { return ebit; }
+	public int getNonOperatingIncomeExcludingInterest() { return nonOperatingIncomeExcludingInterest; }
 	public int getOperatingIncome() { return operatingIncome; }
-	public double getOperatingIncomeRatio() { return operatingIncomeRatio; }
 	public int getTotalOtherIncomeExpensesNet() { return totalOtherIncomeExpensesNet; }
 	public int getIncomeBeforeTax() { return incomeBeforeTax; }
-	public double getIncomeBeforeTaxRatio() { return incomeBeforeTaxRatio; }
 	public int getIncomeTaxExpense() { return incomeTaxExpense; }
+	public int getNetIncomeFromContinuingOperations() { return netIncomeFromContinuingOperations; }
+	public int getNetIncomeFromDiscontinuedOperations() { return netIncomeFromDiscontinuedOperations; }
+	public int getOtherAdjustmentsToNetIncome() { return otherAdjustmentsToNetIncome; }
 	public int getNetIncome() { return netIncome; }
-	public double getNetIncomeRatio() { return netIncomeRatio; }
+	public int getNetIncomeDeductions() { return netIncomeDeductions; }
+	public int getBottomLineNetIncome() { return bottomLineNetIncome; }
 	public double getEps() { return eps; }
-	public int getEpsdiluted() { return epsdiluted; }
+	public double getEpsDiluted() { return epsDiluted; }
 	public int getWeightedAverageShsOut() { return weightedAverageShsOut; }
 	public int getWeightedAverageShsOutDil() { return weightedAverageShsOutDil; }
-	public String getLink() { return link; }
-	public String getFinalLink() { return finalLink; }
 	
 	public static Builder builder(String symbol) {
 		return new Builder(symbol);
 	}
 	
 	public static class Builder {
-		private String symbol;
 		private String date;
+		private String symbol;
 		private String reportedCurrency;
 		private int cik;
-		private String fillingDate;
+		private String filingDate;
 		private String acceptedDate;
-		private int calendarYear;
+		private int fiscalYear;
 		private String period;
 		private int revenue;
 		private int costOfRevenue;
 		private int grossProfit;
-		private double grossProfitRatio;
 		private int researchAndDevelopmentExpenses;
 		private int generalAndAdministrativeExpenses;
 		private int sellingAndMarketingExpenses;
@@ -143,175 +145,181 @@ public class InstrumentFinancials {
 		private int otherExpenses;
 		private int operatingExpenses;
 		private int costAndExpenses;
+		private int netInterestIncome;
 		private int interestIncome;
 		private int interestExpense;
 		private int depreciationAndAmortization;
 		private int ebitda;
-		private double ebitdaratio;
+		private int ebit;
+		private int nonOperatingIncomeExcludingInterest;
 		private int operatingIncome;
-		private double operatingIncomeRatio;
 		private int totalOtherIncomeExpensesNet;
 		private int incomeBeforeTax;
-		private double incomeBeforeTaxRatio;
 		private int incomeTaxExpense;
+		private int netIncomeFromContinuingOperations;
+		private int netIncomeFromDiscontinuedOperations;
+		private int otherAdjustmentsToNetIncome;
 		private int netIncome;
-		private double netIncomeRatio;
+		private int netIncomeDeductions;
+		private int bottomLineNetIncome;
 		private double eps;
-		private int epsdiluted;
+		private double epsDiluted;
 		private int weightedAverageShsOut;
 		private int weightedAverageShsOutDil;
-		private String link;
-		private String finalLink;		
 		
 		private Builder(String symbol) {
 			this.symbol = symbol;
 		}
-		public Builder date (String date) {
+		public Builder date(String date) {
 			this.date = date;
 			return this;
 		}
-		public Builder reportedCurrency (String reportedCurrency) {
+		public Builder reportedCurrency(String reportedCurrency) {
 			this.reportedCurrency = reportedCurrency;
 			return this;
 		}
-		public Builder cik (int cik) {
+		public Builder cik(int cik) {
 			this.cik = cik;
 			return this;
 		}
-		public Builder fillingDate (String fillingDate) {
-			this.fillingDate = fillingDate;
+		public Builder filingDate(String filingDate) {
+			this.filingDate = filingDate;
 			return this;
 		}
-		public Builder acceptedDate (String acceptedDate) {
+		public Builder acceptedDate(String acceptedDate) {
 			this.acceptedDate = acceptedDate;
 			return this;
 		}
-		public Builder calendarYear (int calendarYear) {
-			this.calendarYear = calendarYear;
+		public Builder fiscalYear(int fiscalYear) {
+			this.fiscalYear = fiscalYear;
 			return this;
 		}
-		public Builder period (String period) {
+		public Builder period(String period) {
 			this.period = period;
 			return this;
 		}
-		public Builder revenue (int revenue) {
+		public Builder revenue(int revenue) {
 			this.revenue = revenue;
 			return this;
 		}
-		public Builder costOfRevenue (int costOfRevenue) {
+		public Builder costOfRevenue(int costOfRevenue) {
 			this.costOfRevenue = costOfRevenue;
 			return this;
 		}
-		public Builder grossProfit (int grossProfit) {
+		public Builder grossProfit(int grossProfit) {
 			this.grossProfit = grossProfit;
 			return this;
 		}
-		public Builder grossProfitRatio (double grossProfitRatio) {
-			this.grossProfitRatio = grossProfitRatio;
-			return this;
-		}
-		public Builder researchAndDevelopmentExpenses (int researchAndDevelopmentExpenses) {
+		public Builder researchAndDevelopmentExpenses(int researchAndDevelopmentExpenses) {
 			this.researchAndDevelopmentExpenses = researchAndDevelopmentExpenses;
 			return this;
 		}
-		public Builder generalAndAdministrativeExpenses (int generalAndAdministrativeExpenses) {
+		public Builder generalAndAdministrativeExpenses(int generalAndAdministrativeExpenses) {
 			this.generalAndAdministrativeExpenses = generalAndAdministrativeExpenses;
 			return this;
 		}
-		public Builder sellingAndMarketingExpenses (int sellingAndMarketingExpenses) {
+		public Builder sellingAndMarketingExpenses(int sellingAndMarketingExpenses) {
 			this.sellingAndMarketingExpenses = sellingAndMarketingExpenses;
 			return this;
 		}
-		public Builder sellingGeneralAndAdministrativeExpenses (int sellingGeneralAndAdministrativeExpenses) {
+		public Builder sellingGeneralAndAdministrativeExpenses(int sellingGeneralAndAdministrativeExpenses) {
 			this.sellingGeneralAndAdministrativeExpenses = sellingGeneralAndAdministrativeExpenses;
 			return this;
 		}
-		public Builder otherExpenses (int otherExpenses) {
+		public Builder otherExpenses(int otherExpenses) {
 			this.otherExpenses = otherExpenses;
 			return this;
 		}
-		public Builder operatingExpenses (int operatingExpenses) {
+		public Builder operatingExpenses(int operatingExpenses) {
 			this.operatingExpenses = operatingExpenses;
 			return this;
 		}
-		public Builder costAndExpenses (int costAndExpenses) {
+		public Builder costAndExpenses(int costAndExpenses) {
 			this.costAndExpenses = costAndExpenses;
 			return this;
 		}
-		public Builder interestIncome (int interestIncome) {
+		public Builder netInterestIncome(int netInterestIncome) {
+			this.netInterestIncome = netInterestIncome;
+			return this;
+		}
+		public Builder interestIncome(int interestIncome) {
 			this.interestIncome = interestIncome;
 			return this;
 		}
-		public Builder interestExpense (int interestExpense) {
+		public Builder interestExpense(int interestExpense) {
 			this.interestExpense = interestExpense;
 			return this;
 		}
-		public Builder depreciationAndAmortization (int depreciationAndAmortization) {
+		public Builder depreciationAndAmortization(int depreciationAndAmortization) {
 			this.depreciationAndAmortization = depreciationAndAmortization;
 			return this;
 		}
-		public Builder ebitda (int ebitda) {
+		public Builder ebitda(int ebitda) {
 			this.ebitda = ebitda;
 			return this;
 		}
-		public Builder ebitdaratio (double ebitdaratio) {
-			this.ebitdaratio = ebitdaratio;
+		public Builder ebit(int ebit) {
+			this.ebit = ebit;
 			return this;
 		}
-		public Builder operatingIncome (int operatingIncome) {
+		public Builder nonOperatingIncomeExcludingInterest(int nonOperatingIncomeExcludingInterest) {
+			this.nonOperatingIncomeExcludingInterest = nonOperatingIncomeExcludingInterest;
+			return this;
+		}
+		public Builder operatingIncome(int operatingIncome) {
 			this.operatingIncome = operatingIncome;
 			return this;
 		}
-		public Builder operatingIncomeRatio (double operatingIncomeRatio) {
-			this.operatingIncomeRatio = operatingIncomeRatio;
-			return this;
-		}
-		public Builder totalOtherIncomeExpensesNet (int totalOtherIncomeExpensesNet) {
+		public Builder totalOtherIncomeExpensesNet(int totalOtherIncomeExpensesNet) {
 			this.totalOtherIncomeExpensesNet = totalOtherIncomeExpensesNet;
 			return this;
 		}
-		public Builder incomeBeforeTax (int incomeBeforeTax) {
+		public Builder incomeBeforeTax(int incomeBeforeTax) {
 			this.incomeBeforeTax = incomeBeforeTax;
 			return this;
 		}
-		public Builder incomeBeforeTaxRatio (double incomeBeforeTaxRatio) {
-			this.incomeBeforeTaxRatio = incomeBeforeTaxRatio;
-			return this;
-		}
-		public Builder incomeTaxExpense (int incomeTaxExpense) {
+		public Builder incomeTaxExpense(int incomeTaxExpense) {
 			this.incomeTaxExpense = incomeTaxExpense;
 			return this;
 		}
-		public Builder netIncome (int netIncome) {
+		public Builder netIncomeFromContinuingOperations(int netIncomeFromContinuingOperations) {
+			this.netIncomeFromContinuingOperations = netIncomeFromContinuingOperations;
+			return this;
+		}
+		public Builder netIncomeFromDiscontinuedOperations(int netIncomeFromDiscontinuedOperations) {
+			this.netIncomeFromDiscontinuedOperations = netIncomeFromDiscontinuedOperations;
+			return this;
+		}
+		public Builder otherAdjustmentsToNetIncome(int otherAdjustmentsToNetIncome) {
+			this.otherAdjustmentsToNetIncome = otherAdjustmentsToNetIncome;
+			return this;
+		}
+		public Builder netIncome(int netIncome) {
 			this.netIncome = netIncome;
 			return this;
 		}
-		public Builder netIncomeRatio (double netIncomeRatio) {
-			this.netIncomeRatio = netIncomeRatio;
+		public Builder netIncomeDeductions(int netIncomeDeductions) {
+			this.netIncomeDeductions = netIncomeDeductions;
 			return this;
 		}
-		public Builder eps (double eps) {
+		public Builder bottomLineNetIncome(int bottomLineNetIncome) {
+			this.bottomLineNetIncome = bottomLineNetIncome;
+			return this;
+		}
+		public Builder eps(double eps) {
 			this.eps = eps;
 			return this;
 		}
-		public Builder epsdiluted (int epsdiluted) {
-			this.epsdiluted = epsdiluted;
+		public Builder epsDiluted(double epsDiluted) {
+			this.epsDiluted = epsDiluted;
 			return this;
 		}
-		public Builder weightedAverageShsOut (int weightedAverageShsOut) {
+		public Builder weightedAverageShsOut(int weightedAverageShsOut) {
 			this.weightedAverageShsOut = weightedAverageShsOut;
 			return this;
 		}
-		public Builder weightedAverageShsOutDil (int weightedAverageShsOutDil) {
+		public Builder weightedAverageShsOutDil(int weightedAverageShsOutDil) {
 			this.weightedAverageShsOutDil = weightedAverageShsOutDil;
-			return this;
-		}
-		public Builder link (String link) {
-			this.link = link;
-			return this;
-		}
-		public Builder finalLink (String finalLink) {
-			this.finalLink = finalLink;
 			return this;
 		}
 		public InstrumentFinancials build() {

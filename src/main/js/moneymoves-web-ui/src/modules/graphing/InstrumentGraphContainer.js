@@ -74,10 +74,6 @@ class InstrumentGraphContainer extends Component {
 		});
 		const title = 'Candlestick Chart for ' + loadedSymbol;
 		return {
-			title: {
-				text: title,
-				left: 0
-			},
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: {

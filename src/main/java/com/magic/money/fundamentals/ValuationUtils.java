@@ -33,7 +33,8 @@ public class ValuationUtils {
         double taxRate = fundamentals.getInstrumentValuation().getEffectiveTaxRateTTM();
 
         // Cost of Equity (CAPM)
-        double beta = (valuation.getCompanyEquityMultiplierTTM() > 0) ? valuation.getCompanyEquityMultiplierTTM() : DEFAULT_BETA;
+        double beta = DEFAULT_BETA; 
+        		//(valuation.getCompanyEquityMultiplierTTM() > 0) ? valuation.getCompanyEquityMultiplierTTM() : DEFAULT_BETA;
         double costOfEquity = RISK_FREE_RATE + beta * EQUITY_PREMIUM;
 
         // Weights
@@ -63,8 +64,9 @@ public class ValuationUtils {
         double terminalGrowth = 0.03; // 3% perpetual growth
 
         double fcfPerShare = fundamentals.getInstrumentValuation().getFreeCashFlowPerShareTTM();
-        InstrumentGrowth latestGrowth = fundamentals.getLatestGrowth();
-        double growthRate = latestGrowth != null ? latestGrowth.getFreeCashFlowGrowth() : 0.05;
+        InstrumentCashFlowGrowth latestGrowth = fundamentals.getLatestCashFlowGrowth();
+        double growthRate = // latestGrowth != null ? latestGrowth.getFreeCashFlowGrowth() : 
+        		0.05;
 
         double intrinsicValue = 0.0;
         for (int t = 1; t <= projectionYears; t++) {
@@ -73,8 +75,11 @@ public class ValuationUtils {
         }
 
         // Terminal value
+        
         double terminalFCF = fcfPerShare * Math.pow(1 + growthRate, projectionYears);
+        System.out.println("fcfPerShare=" + fcfPerShare + ", growthRate=" + growthRate);
         double terminalValue = terminalFCF * (1 + terminalGrowth) / (discountRate - terminalGrowth);
+        System.out.println("terminalFCF=" + terminalFCF + ", terminalValue=" + terminalValue);
         intrinsicValue += terminalValue / Math.pow(1 + discountRate, projectionYears);
 
         return intrinsicValue;

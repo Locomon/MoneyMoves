@@ -4,16 +4,23 @@ import akka.http.javadsl.ServerBinding;
 import akka.http.javadsl.server.Route;
 import java.util.concurrent.CompletionStage;
 import com.magic.money.rest.RestController;
-import akka.actor.ActorSystem;
+import akka.actor.typed.ActorRef;
+import akka.actor.typed.ActorSystem;
+import akka.actor.typed.javadsl.*;
+
+import com.magic.money.core.cache.controller.*;
 
 
 public class Main {
     public static void main(String... args) {
         // Create the Actor System
-        ActorSystem system = ActorSystem.create("my-akka-system");
-
+    	ActorSystem<Void> system = ActorSystem.create(Behaviors.empty(), "MySystem");
+    	
+    	// Spawn InstrumentCacheController
+    	ActorRef<InstrumentCacheCommand> cacheController =
+    		    system.systemActorOf(InstrumentCacheController.create(), "cacheController", akka.actor.typed.Props.empty());    	
         // Create the controller and route
-        RestController controller = new RestController();
+        RestController controller = new RestController(system, cacheController);
         Route routes = controller.createRoutes();
 
         // Bind the route to the server

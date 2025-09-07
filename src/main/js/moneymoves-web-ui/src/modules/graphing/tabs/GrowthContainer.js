@@ -9,7 +9,7 @@ class GrowthContainer extends Component {
 		super(props);
 		this.state = {
 			symbol: null,
-			instrumentGrowthMap: null,
+			instrumentCashFlowGrowthMap: null,
 			availableColumns: [],
 			columnFlags: [],
 			showSettings: false
@@ -20,17 +20,17 @@ class GrowthContainer extends Component {
 		if (this.props.fundamentals !== prevProps.fundamentals) {
 			if (
 				this.props.fundamentals != null &&
-				this.props.fundamentals.instrumentGrowthMap != null
+				this.props.fundamentals.instrumentCashFlowGrowthMap != null
 			) {
-				const instrumentGrowthMap = this.props.fundamentals.instrumentGrowthMap;
-				const firstKey = Object.keys(instrumentGrowthMap)[0];
+				const instrumentCashFlowGrowthMap = this.props.fundamentals.instrumentCashFlowGrowthMap;
+				const firstKey = Object.keys(instrumentCashFlowGrowthMap)[0];
 				if (firstKey != null) {
-					const availableColumns = Object.keys(instrumentGrowthMap[firstKey]);
+					const availableColumns = Object.keys(instrumentCashFlowGrowthMap[firstKey]);
 					const columnFlags = [];
 					availableColumns.forEach(column => columnFlags.push(true));
 					this.setState({
 						symbol: this.props.selectedInstrument.symbol,
-						instrumentGrowthMap: instrumentGrowthMap,
+						instrumentCashFlowGrowthMap: instrumentCashFlowGrowthMap,
 						availableColumns: availableColumns,
 						columnFlags: columnFlags
 					});
@@ -47,11 +47,11 @@ class GrowthContainer extends Component {
 
 
 	render() {
-		const { symbol, instrumentGrowthMap, availableColumns, columnFlags, showSettings } = this.state;
+		const { symbol, instrumentCashFlowGrowthMap, availableColumns, columnFlags, showSettings } = this.state;
 		const tableStyle = { borderCollapse: 'collapse', width: '100%' };
 		const thStyle = { border: '1px solid #ccc', backgroundColor: '#f2f2f2', padding: '8px', textAlign: 'left' };
 		const tdStyle = { border: '1px solid #ccc', padding: '8px' };
-		if (!instrumentGrowthMap) {
+		if (!instrumentCashFlowGrowthMap) {
 			return (
 				<Card className="card-full-height">
 					<CardHeader className="d-flex justify-content-center">
@@ -110,7 +110,7 @@ class GrowthContainer extends Component {
 								</tr>
 							</thead>
 							<tbody>
-								{Object.entries(instrumentGrowthMap).map(([instrumentKey, instrumentData]) => (
+								{Object.entries(instrumentCashFlowGrowthMap).map(([instrumentKey, instrumentData]) => (
 									<tr key={instrumentKey}>
 										{availableColumns.filter((col, index) => columnFlags[index] == true)
 														 .map((col) => (

@@ -16,7 +16,6 @@ import java.util.Properties;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.magic.money.core.ApiKeyManager;

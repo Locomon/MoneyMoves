@@ -40,20 +40,22 @@ public class FmpFundamentalsJsonLoader {
     	
     	String apiKey = ApiKeyManager.getKey("fmp");
         String[] endpoints = {
-            "https://financialmodelingprep.com/api/v3/ratios-ttm/",
-            "https://financialmodelingprep.com/api/v3/income-statement/",
-            "https://financialmodelingprep.com/api/v3/balance-sheet-statement/",
-            "https://financialmodelingprep.com/api/v3/financial-growth/"
+            "https://financialmodelingprep.com/stable/ratios-ttm",
+            "https://financialmodelingprep.com/stable/income-statement",
+            "https://financialmodelingprep.com/stable/balance-sheet-statement",
+            "https://financialmodelingprep.com/stable/cash-flow-statement-growth"//,
+            //"https://financialmodelingprep.com/stable/income-statement-growth"
         };
 
         String[] keys = {
-            "ratiosTTM", "incomeStatement", "balanceSheet", "financialGrowth"
+            "ratiosTTM", "incomeStatement", "balanceSheet", //"balanceSheetGrowth", 
+            "cashFlowGrowth"
         };
 
         JsonObject combinedResult = new JsonObject();
 
         for (int i = 0; i < endpoints.length; i++) {
-            String url = endpoints[i] + symbol + "?apikey=" + apiKey;
+            String url = endpoints[i] + "?symbol=" + symbol + "&&apikey=" + apiKey;
             String response = fetchFromUrl(url);
 
             // Parse the JSON response and attach it under the relevant key
@@ -74,7 +76,7 @@ public class FmpFundamentalsJsonLoader {
         conn.setRequestProperty("Accept", "application/json");
 
         if (conn.getResponseCode() != 200) {
-            throw new IOException("Failed to fetch data. HTTP code: " + conn.getResponseCode());
+            throw new IOException("Failed to fetch data from url: " + urlString + ", HTTP code: " + conn.getResponseCode());
         }
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
