@@ -1,7 +1,6 @@
 package com.magic.money.fundamentals.cache.loader;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 
 
@@ -10,7 +9,6 @@ import com.magic.money.fundamentals.domain.FundamentalsContainer;
 import com.magic.money.fundamentals.domain.InstrumentFinancials;
 import com.magic.money.fundamentals.domain.InstrumentBalance;
 import com.magic.money.fundamentals.domain.InstrumentValuation;
-import com.magic.money.fundamentals.domain.InstrumentBalanceGrowth;
 import com.magic.money.fundamentals.domain.InstrumentCashFlowGrowth;
 
 import java.io.BufferedReader;

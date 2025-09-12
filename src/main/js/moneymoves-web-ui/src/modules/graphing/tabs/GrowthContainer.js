@@ -39,11 +39,11 @@ class GrowthContainer extends Component {
 		}
 	}
 
-	toggleColumn = (index) => {
+	toggleColumn(index) {
 		const { columnFlags } = this.state;
 		columnFlags[index] = !columnFlags[index];
 		this.setState({});
-	};
+	}
 
 
 	render() {

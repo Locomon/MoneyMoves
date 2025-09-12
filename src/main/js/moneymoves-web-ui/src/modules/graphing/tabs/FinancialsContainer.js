@@ -39,12 +39,11 @@ class FinancialsContainer extends Component {
 		}
 	}
 
-	toggleColumn = (index) => {
+	toggleColumn(index) {
 		const { columnFlags } = this.state;
 		columnFlags[index] = !columnFlags[index];
 		this.setState({});
-	};
-
+	}
 
 	render() {
 		const { symbol, instrumentFinancialsMap, availableColumns, columnFlags, showSettings } = this.state;

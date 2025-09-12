@@ -6,37 +6,92 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Properties;
+import java.util.concurrent.CompletionStage;
 
+import com.magic.money.core.cache.controller.InstrumentCacheCommand;
 import com.magic.money.core.domain.InstrumentTimeseries;
 import com.magic.money.core.domain.InstrumentTimeseries.InstrumentTimeseriesBuilder;
 
-public class AlphaVantageCacheLoader {
-	
-	public static InstrumentTimeseries getTimeseriesDaily(String symbol) {
+import akka.actor.typed.ActorRef;
+import akka.actor.typed.ActorSystem;
+import akka.actor.typed.Behavior;
+import akka.actor.typed.javadsl.*;
+
+public class AlphaVantageCacheLoader extends AbstractBehavior<InstrumentCacheCommand> {
+
+	private final ActorContext<InstrumentCacheCommand> context;
+	private final ActorRef<InstrumentCacheCommand> alphaVantageCsvLoader;
+
+	private AlphaVantageCacheLoader(ActorSystem<Void> system, ActorContext<InstrumentCacheCommand> context) {
+		super(context);
+		this.context = context;
+		this.alphaVantageCsvLoader =
+				system.systemActorOf(AlphaVantageCsvLoader.create(), "alphaVantageCsvLoader", akka.actor.typed.Props.empty());
+	}
+
+	public static Behavior<InstrumentCacheCommand> create(ActorSystem<Void> system) {
+		return Behaviors.setup(context -> new AlphaVantageCacheLoader(system, context));
+	}
+
+	@Override
+	public Receive<InstrumentCacheCommand> createReceive() {
+		return newReceiveBuilder().onMessage(InstrumentCacheCommand.GetTimeseriesDaily.class, this::getTimeseriesDaily).build();
+	}
+
+	public Behavior<InstrumentCacheCommand> getTimeseriesDaily(
+			InstrumentCacheCommand.GetTimeseriesDaily msg) {
+		String symbol = msg.getSymbol();
+		ActorRef<InstrumentTimeseries> replyTo = msg.getReplyTo();
 		try {
 			Properties config = new Properties();
 			InputStream input = AlphaVantageCacheLoader.class.getClassLoader().getResourceAsStream("config.properties");
-	        
-	        if (input == null) {
-                throw new IOException("config.properties not found in classpath.");
-            }
-            config.load(input);
-            // Step 1: Get base datadir
-	        String dataDirStr = config.getProperty("datadir");
-	        Path dataDir = Paths.get(dataDirStr);
-	        // Step 2: Resolve RawData subfolder
-	        Path rawDataDir = dataDir.resolve("TimeseriesRaw");
-	        // Step 3: Create Metadata directory if it doesn't exist
-	        if (Files.notExists(rawDataDir)) {
-	            Files.createDirectories(rawDataDir);
-	        }
-	        Path symbolPath = rawDataDir.resolve(symbol + ".csv");
-	        if (!Files.exists(symbolPath)) {
-	            return null;
-	        }
-	        BufferedReader reader = Files.newBufferedReader(symbolPath);
+
+			if (input == null) {
+				throw new IOException("config.properties not found in classpath.");
+			}
+			config.load(input);
+			// Step 1: Get base datadir
+			String dataDirStr = config.getProperty("datadir");
+			Path dataDir = Paths.get(dataDirStr);
+			// Step 2: Resolve RawData subfolder
+			Path rawDataDir = dataDir.resolve("TimeseriesRaw");
+			// Step 3: Create Metadata directory if it doesn't exist
+			if (Files.notExists(rawDataDir)) {
+				Files.createDirectories(rawDataDir);
+			}
+			Path symbolPath = rawDataDir.resolve(symbol + ".csv");
+			if (!Files.exists(symbolPath)) {
+				Duration timeout = Duration.ofSeconds(60);
+				CompletionStage<Boolean> future =
+					AskPattern.ask(alphaVantageCsvLoader, // ActorRef<AlphaVantageCacheLoader.Command>
+								   (ActorRef<Boolean> ref) ->
+										new InstrumentCacheCommand.LoadTimeseriesDaily(symbol, ref),
+								   timeout,
+								   context.getSystem().scheduler());
+				future.whenComplete((result, ex) -> {
+					if (result) {
+						readFromSymbolPath(symbol, replyTo, symbolPath);
+					} else {
+						ex.printStackTrace();
+						replyTo.tell(null);
+					} 
+				});
+			} else {
+				readFromSymbolPath(symbol, replyTo, symbolPath);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return this;
+	}
+
+	private void readFromSymbolPath(String symbol, ActorRef<InstrumentTimeseries> replyTo, Path symbolPath) {
+		try {
+			BufferedReader reader = Files.newBufferedReader(symbolPath);
 			InstrumentTimeseriesBuilder builder = InstrumentTimeseries.builder(symbol);
 			String line;
 			while((line = reader.readLine()) != null) {
@@ -49,16 +104,14 @@ public class AlphaVantageCacheLoader {
 				double low = Double.valueOf(row[3]);
 				double close = Double.valueOf(row[4]);
 				int volume = Integer.valueOf(row[5]);
-				builder.instrumentTimeseriesDatapoint(cobDate, open, high, low, close, volume, Double.NaN);
+				double vwapApprox = (high + low + close) / 3;
+				builder.instrumentTimeseriesDatapoint(cobDate, open, high, low, close, volume, vwapApprox);
 			}
 			reader.close();
-			return builder.build();			
+			replyTo.tell(builder.build());
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			replyTo.tell(null);
 		}
-
 	}
-
-
 }

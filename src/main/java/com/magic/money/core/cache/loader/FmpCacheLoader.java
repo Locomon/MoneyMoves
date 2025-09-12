@@ -76,7 +76,7 @@ public class FmpCacheLoader {
 							  .isEtf(Boolean.valueOf(linesplit[12]))
 							  .isFund(Boolean.valueOf(linesplit[13]))
 							  .isActivelyTrading(Boolean.valueOf(linesplit[14])).build();
-				cache.putInstrument(instrument);
+				cache.putInstrumentOld(instrument);
 			}
 			reader.close();
 		} catch (Exception e) {

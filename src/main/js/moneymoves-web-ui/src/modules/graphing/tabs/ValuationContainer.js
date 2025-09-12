@@ -26,7 +26,6 @@ class ValuationContainer extends Component {
 		}
 	}
 	
-	
 	render() {
 		const {selectedInstrument} = this.props;
 		const {instrumentValuation, symbol} = this.state;
