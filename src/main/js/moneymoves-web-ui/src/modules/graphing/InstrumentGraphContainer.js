@@ -224,9 +224,9 @@ class InstrumentGraphContainer extends Component {
 	
 
 	getVolumeChartOptions() {
-		const { timeseries, zoomStart, zoomEnd } = this.state;
-		const dates = timeseries.map(entry => entry.date);
-		const volumes = timeseries.map(entry => entry.volume);
+		const { filteredTimeseries } = this.state;
+		const dates = filteredTimeseries.map(entry => entry.date);
+		const volumes = filteredTimeseries.map(entry => entry.volume);
 
 		return {
 			title: {
@@ -238,9 +238,7 @@ class InstrumentGraphContainer extends Component {
 			},
 			xAxis: {
 				type: 'category',
-				data: dates,
-				min: (zoomStart / 100) * (dates.length - 1),
-				max: (zoomEnd / 100) * (dates.length - 1)
+				data: dates
 			},
 			yAxis: {
 				type: 'value'

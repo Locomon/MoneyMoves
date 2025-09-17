@@ -1,4 +1,4 @@
-package com.magic.money.core.cache.loader;
+package com.magic.money.core.ingest;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.magic.money.core.ApiKeyManager;
 import com.magic.money.core.cache.MARKET_CAP;
+import com.magic.money.core.cache.loader.FMP_SECTOR;
 public class FmpCsvLoader {
 	
 	public static void loadInstrumentDefinitionsToCsv() {

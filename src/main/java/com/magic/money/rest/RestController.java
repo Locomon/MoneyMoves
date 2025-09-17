@@ -7,8 +7,8 @@ import java.util.function.Supplier;
 
 import com.magic.money.technical.TechnicalAnalysis;
 import com.magic.money.core.cache.InstrumentCache;
-import com.magic.money.core.cache.command.InstrumentCacheController;
-import com.magic.money.core.cache.controller.InstrumentCacheCommand;
+import com.magic.money.core.cache.command.InstrumentCacheCommand;
+import com.magic.money.core.cache.controller.InstrumentCacheController;
 import com.magic.money.core.domain.Instrument;
 import com.magic.money.core.domain.InstrumentTimeseries;
 import com.magic.money.fundamentals.cache.controller.FundamentalsCacheController;

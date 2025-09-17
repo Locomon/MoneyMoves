@@ -1,4 +1,4 @@
-package com.magic.money.core.cache.controller;
+package com.magic.money.core.cache.command;
 
 import java.util.Map;
 import akka.actor.typed.ActorRef;

@@ -11,9 +11,10 @@ import java.time.LocalDate;
 import java.util.Properties;
 import java.util.concurrent.CompletionStage;
 
-import com.magic.money.core.cache.controller.InstrumentCacheCommand;
+import com.magic.money.core.cache.command.InstrumentCacheCommand;
 import com.magic.money.core.domain.InstrumentTimeseries;
 import com.magic.money.core.domain.InstrumentTimeseries.InstrumentTimeseriesBuilder;
+import com.magic.money.core.ingest.AlphaVantageCsvLoader;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.ActorSystem;

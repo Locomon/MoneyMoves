@@ -1,10 +1,10 @@
-package com.magic.money.core.cache.loader;
+package com.magic.money.core.ingest;
 
 import java.io.*;
 import java.util.Properties;
 
 import com.magic.money.core.ApiKeyManager;
-import com.magic.money.core.cache.controller.InstrumentCacheCommand;
+import com.magic.money.core.cache.command.InstrumentCacheCommand;
 
 import java.net.*;
 import java.nio.file.Files;

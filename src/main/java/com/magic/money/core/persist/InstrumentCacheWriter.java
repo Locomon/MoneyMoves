@@ -1,4 +1,4 @@
-package com.magic.money.core.cache.persistence;
+package com.magic.money.core.persist;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -11,9 +11,9 @@ import java.util.Map;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import com.magic.money.core.cache.loader.AlphaVantageCsvLoader;
 import com.magic.money.core.domain.InstrumentTimeseries;
 import com.magic.money.core.domain.InstrumentTimeseriesDatapoint;
+import com.magic.money.core.ingest.AlphaVantageCsvLoader;
 
 public class InstrumentCacheWriter {
 

@@ -115,9 +115,9 @@ class TickerList extends Component {
 										 , marketCapMin, marketCapMax, country, industry, exchange, isEtf, isFund} = this.state;
 		return (instrument) =>
 			instrument.symbol.toLowerCase().startsWith(searchTerm) &&
-			((priceMin == "" || priceMax=="") || (Number(priceMin) <= instrument.price && instrument.price <= Number(priceMax))) &&
-			((betaMin == "" || betaMax=="") || (Number(betaMin) <= instrument.beta && instrument.beta <= Number(betaMax)) ) &&
-			((marketCapMin == "" || marketCapMax=="") || (Number(marketCapMin) <= instrument.marketCap && instrument.marketCap <= Number(marketCapMax)) ) &&
+			( ( priceMin == "" || Number(priceMin) <= instrument.price ) && ( priceMax=="" || instrument.price <= Number(priceMax) ) ) &&
+			( ( betaMin == "" || Number(betaMin) <= instrument.beta ) && ( betaMax=="" || instrument.beta <= Number(betaMax) ) ) &&
+			( ( marketCapMin == "" || Number(marketCapMin) <= instrument.marketCap ) && ( marketCapMax=="" || instrument.marketCap <= Number(marketCapMax) ) ) &&
 			(country == "" || (instrument.country != null && country === (instrument.country.toLowerCase()))) &&
 			(industry == "" || (instrument.industry != null && industry === (instrument.industry.toLowerCase()))) &&
 			(exchange == "" || (instrument.exchange != null && exchange === (instrument.exchangeShortName.toLowerCase())));

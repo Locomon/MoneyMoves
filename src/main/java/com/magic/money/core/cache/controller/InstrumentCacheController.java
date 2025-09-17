@@ -1,4 +1,4 @@
-package com.magic.money.core.cache.command;
+package com.magic.money.core.cache.controller;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -7,15 +7,17 @@ import java.util.concurrent.CompletionStage;
 
 import com.magic.money.core.cache.InstrumentCache;
 import com.magic.money.core.cache.MARKET_CAP;
-import com.magic.money.core.cache.controller.InstrumentCacheCommand;
-import com.magic.money.core.cache.loader.FMP_SECTOR;
+import com.magic.money.core.cache.command.InstrumentCacheCommand;
+import com.magic.money.core.cache.command.InstrumentCacheCommand.GetOrPopulateSectorIndustrySymbolMap;
+import com.magic.money.core.cache.command.InstrumentCacheCommand.GetTimeseriesDaily;
+import com.magic.money.core.cache.command.InstrumentCacheCommand.LoadFromEdgar;
 import com.magic.money.core.cache.loader.AlphaVantageCacheLoader;
-import com.magic.money.core.cache.loader.SecDataLoader;
-
+import com.magic.money.core.cache.loader.FMP_SECTOR;
 import com.magic.money.core.cache.loader.FmpCacheLoader;
-import com.magic.money.core.cache.loader.FmpCsvLoader;
 import com.magic.money.core.domain.Instrument;
 import com.magic.money.core.domain.InstrumentTimeseries;
+import com.magic.money.core.ingest.FmpCsvLoader;
+import com.magic.money.core.ingest.SecDataLoader;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.ActorSystem;
@@ -27,7 +29,7 @@ public class InstrumentCacheController extends AbstractBehavior<InstrumentCacheC
 	private final ActorContext<InstrumentCacheCommand> context;
 	private final ActorRef<InstrumentCacheCommand> alphaVantageCacheLoader;
 	
-	private InstrumentCacheController(ActorSystem<Void> system, ActorContext<InstrumentCacheCommand> context) {
+	private InstrumentCacheController(ActorContext<InstrumentCacheCommand> context, ActorSystem<Void> system) {
 		super(context);
 		this.context = context;
 		this.alphaVantageCacheLoader = 
@@ -36,7 +38,7 @@ public class InstrumentCacheController extends AbstractBehavior<InstrumentCacheC
 	}
 	
 	public static Behavior<InstrumentCacheCommand> create(ActorSystem<Void> system) {
-		return Behaviors.setup(context -> new InstrumentCacheController(system, context));
+		return Behaviors.setup(context -> new InstrumentCacheController(context, system));
 	}
 	
 	@Override

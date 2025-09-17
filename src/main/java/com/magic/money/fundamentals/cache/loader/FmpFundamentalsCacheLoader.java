@@ -2,8 +2,6 @@ package com.magic.money.fundamentals.cache.loader;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.primitives.Ints;
-
-
 import com.magic.money.core.cache.loader.FmpCacheLoader;
 import com.magic.money.fundamentals.domain.FundamentalsContainer;
 import com.magic.money.fundamentals.domain.InstrumentFinancials;
