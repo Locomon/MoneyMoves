@@ -62,6 +62,7 @@ class InstrumentGraphContainer extends Component {
 					support2: data.support2,
 					resistance: data.resistance1,
 					resistance2: data.resistance2,
+					sma5: data.sma5,
 					sma14: data.sma14,
 					sma60: data.sma60,
 					macd: data.macd,
@@ -172,6 +173,13 @@ class InstrumentGraphContainer extends Component {
 					type: 'line',
 					data: filteredTimeseries.map(entry => entry.resistance2 ?? null),
 					lineStyle: { color: '#FF6347', type: 'dashed' },
+					showSymbol: false
+				},
+				{
+					name: 'sma5',
+					type: 'line',
+					data: filteredTimeseries.map(entry => entry.sma5 ?? null),
+					lineStyle: { color: '#BB6347', type: 'dotted' },
 					showSymbol: false
 				},
 				{

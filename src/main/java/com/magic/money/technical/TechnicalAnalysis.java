@@ -31,6 +31,7 @@ public class TechnicalAnalysis {
 
 		EnrichedTimeseries.EnrichedTimeseriesBuilder builder = EnrichedTimeseries.builder(rawTimeseries.getSymbol());
 		
+		Map<LocalDate, Double> sma5Map = calculateSMA(rawDatapointMap, sortedDates,  5);
 		Map<LocalDate, Double> sma14Map = calculateSMA(rawDatapointMap, sortedDates, 14);
 		Map<LocalDate, Double> sma60Map = calculateSMA(rawDatapointMap, sortedDates, 60);
 		
@@ -43,23 +44,12 @@ public class TechnicalAnalysis {
 			if (rsi == null) {
 				rsi = Double.NaN;
 			}
-			Double sma14 = sma14Map.get(cobDate);
-			if (sma14 == null) {
-				sma14 = Double.NaN;
-			}
-			Double sma60 = sma60Map.get(cobDate);
-			if (sma60 == null) {
-				sma60 = Double.NaN;
-			}
-			Double emaFast = emaFastMap.get(cobDate);
-			Double emaSlow = emaSlowMap.get(cobDate);
-			Double macd = emaFast != null && emaSlow != null ? emaFast - emaSlow : Double.NaN;
-			if (emaFast == null) {
-				emaFast = Double.NaN;
-			}
-			if (emaSlow == null) {
-				emaSlow = Double.NaN;
-			}
+			Double sma5 = sma5Map.getOrDefault(cobDate, Double.NaN);
+			Double sma14 = sma14Map.getOrDefault(cobDate, Double.NaN);
+			Double sma60 = sma60Map.getOrDefault(cobDate, Double.NaN);
+			Double emaFast = emaFastMap.getOrDefault(cobDate, Double.NaN);
+			Double emaSlow = emaSlowMap.getOrDefault(cobDate, Double.NaN);
+			Double macd = emaFast != Double.NaN && emaSlow != Double.NaN ? emaFast - emaSlow : Double.NaN;
 			InstrumentTimeseriesDatapoint prevDatapoint = rawDatapointMap.get(sortedDates.get(i - 1));
 			double pivot = ( prevDatapoint.getHigh() + prevDatapoint.getLow() + prevDatapoint.getClose() ) / 3;
 			double support1 = ( pivot * 2) - prevDatapoint.getHigh();
@@ -71,7 +61,7 @@ public class TechnicalAnalysis {
 									   				   .rsi(rsi)
 									   				   .support1(support1).support2(support2)
 									   				   .resistance1(resistance1).resistance2(resistance2)
-									   				   .sma14(sma14).sma60(sma60)
+									   				   .sma5(sma5).sma14(sma14).sma60(sma60)
 									   				   .emaFast(emaFast).emaSlow(emaSlow).macd(macd).build());
 		}
 		return builder.build();

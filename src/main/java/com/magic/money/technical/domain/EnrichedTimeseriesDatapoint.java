@@ -13,6 +13,7 @@ public class EnrichedTimeseriesDatapoint {
 	private double support2;
 	private double resistance1;
 	private double resistance2;
+	private double sma5;
 	private double sma14;
 	private double sma60;
 	private double emaFast;
@@ -26,6 +27,7 @@ public class EnrichedTimeseriesDatapoint {
 		this.support2 = builder.support2;
 		this.resistance1 = builder.resistance1;
 		this.resistance2 = builder.resistance2;
+		this.sma5 = builder.sma5;
 		this.sma14 = builder.sma14;
 		this.sma60 = builder.sma60;
 		this.emaFast = builder.emaFast;
@@ -45,6 +47,7 @@ public class EnrichedTimeseriesDatapoint {
 	public double getSupport2() { return support2; }
 	public double getResistance1() { return resistance1; }
 	public double getResistance2() { return resistance2; }
+	public double getSma5() { return sma5; }
 	public double getSma14() { return sma14; }
 	public double getSma60() { return sma60; }
 	public double getEmaFast() { return emaFast; }
@@ -62,6 +65,7 @@ public class EnrichedTimeseriesDatapoint {
 		private double support2;
 		private double resistance1;
 		private double resistance2;
+		private double sma5;
 		private double sma14;
 		private double sma60;
 		private double emaFast;
@@ -89,6 +93,10 @@ public class EnrichedTimeseriesDatapoint {
 		}
 		public Builder resistance2(double resistance2) {
 			this.resistance2 = resistance2;
+			return this;
+		}
+		public Builder sma5(double sma5) {
+			this.sma5 = sma5;
 			return this;
 		}
 		public Builder sma14(double sma14) {
